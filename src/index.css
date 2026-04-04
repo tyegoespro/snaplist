@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f1016;
+  --color-surface: #1a1b23;
+  --color-surface-2: #23242e;
+  --color-border: #2e303a;
+  --color-text: #9ca3af;
+  --color-text-h: #f3f4f6;
+  --color-accent: #6C63FF;
+  --color-accent-hover: #7d75ff;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply bg-bg text-text font-sans m-0 antialiased;
+}
+
+#root {
+  @apply min-h-svh flex flex-col;
+}
+
+/* Hide scrollbar for horizontal scrollable areas */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area bottom padding for bottom nav */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.glass {
+  @apply bg-surface/60 backdrop-blur-xl border border-white/5;
+}
+
+.glass-accent {
+  @apply bg-accent/10 backdrop-blur-lg border border-accent/20;
+}
+
+/* Animations */
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Smooth transitions */
+* {
+  -webkit-tap-highlight-color: transparent;
+  @apply transition-all duration-200;
+}
