@@ -33,3 +33,9 @@ dist-ssr
 
 # Claude
 .claude/
+
+# Vercel & build temps
+.vercel/
+.npm-cache/
+.home/
+.vercel
