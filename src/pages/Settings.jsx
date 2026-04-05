@@ -2,12 +2,19 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 
+// Valid promo codes that grant Pro access
+const VALID_CODES = ['SNAPFAM', 'EARLYBIRD', 'BETACREW']
+
 export default function Settings() {
   const { user, signOut } = useAuth()
   const [profile, setProfile] = useState(null)
   const [displayName, setDisplayName] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [promoCode, setPromoCode] = useState('')
+  const [promoStatus, setPromoStatus] = useState(null) // 'success' | 'error' | null
+  const [promoMessage, setPromoMessage] = useState('')
+  const [redeeming, setRedeeming] = useState(false)
 
   useEffect(() => {
     fetchProfile()
@@ -41,6 +48,43 @@ export default function Settings() {
       setTimeout(() => setSaved(false), 2000)
     }
     setSaving(false)
+  }
+
+  async function redeemCode() {
+    const code = promoCode.trim().toUpperCase()
+    if (!code) return
+
+    setRedeeming(true)
+    setPromoStatus(null)
+
+    if (profile?.plan === 'pro') {
+      setPromoStatus('error')
+      setPromoMessage('You already have Pro!')
+      setRedeeming(false)
+      return
+    }
+
+    if (VALID_CODES.includes(code)) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ plan: 'pro', updated_at: new Date().toISOString() })
+        .eq('id', user.id)
+
+      if (!error) {
+        setPromoStatus('success')
+        setPromoMessage('🎉 Welcome to Pro! Refresh to unlock all features.')
+        setProfile({ ...profile, plan: 'pro' })
+        setPromoCode('')
+      } else {
+        setPromoStatus('error')
+        setPromoMessage('Something went wrong. Try again.')
+      }
+    } else {
+      setPromoStatus('error')
+      setPromoMessage('Invalid code. Check your spelling and try again.')
+    }
+
+    setRedeeming(false)
   }
 
   const planBadge = {
@@ -98,6 +142,45 @@ export default function Settings() {
           >
             {saved ? '✓ Saved!' : saving ? 'Saving...' : 'Save Changes'}
           </button>
+        </div>
+
+        {/* Promo code */}
+        <div className="mt-4 bg-surface border border-border rounded-xl p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-text-h uppercase tracking-wide flex items-center gap-2">
+            <span>⚡</span> Redeem Code
+          </h2>
+          <p className="text-xs text-text">
+            Have an invite code? Enter it below to unlock Pro features.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => {
+                setPromoCode(e.target.value.toUpperCase())
+                setPromoStatus(null)
+              }}
+              placeholder="Enter code"
+              maxLength={20}
+              className="flex-1 bg-bg border border-border rounded-xl px-4 py-3 text-text-h placeholder:text-text/40 focus:outline-none focus:border-accent transition-colors uppercase tracking-widest font-mono text-center"
+            />
+            <button
+              onClick={redeemCode}
+              disabled={!promoCode.trim() || redeeming}
+              className="bg-accent hover:bg-accent-hover text-white font-medium rounded-xl px-5 py-3 transition-colors disabled:opacity-50 flex-shrink-0"
+            >
+              {redeeming ? '...' : 'Redeem'}
+            </button>
+          </div>
+          {promoStatus && (
+            <div className={`text-xs px-3 py-2 rounded-lg ${
+              promoStatus === 'success'
+                ? 'bg-success/10 text-success border border-success/20'
+                : 'bg-danger/10 text-danger border border-danger/20'
+            }`}>
+              {promoMessage}
+            </div>
+          )}
         </div>
 
         {/* App info */}
