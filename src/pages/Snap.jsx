@@ -364,7 +364,7 @@ export default function Snap() {
   // --- CAMERA VIEWFINDER STEP ---
   if (step === 'camera') {
     return (
-      <div className="flex-1 flex flex-col bg-black relative">
+      <div className="fixed inset-0 z-[70] flex flex-col bg-black">
         {cameraError ? (
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="text-center max-w-sm">
@@ -408,7 +408,7 @@ export default function Snap() {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 pt-8 pb-28">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 pt-8 pb-12 safe-bottom">
               <div className="flex items-center justify-center gap-10 max-w-xs mx-auto">
                 {/* Cancel/Back */}
                 <button
