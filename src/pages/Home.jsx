@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
-import ClipboardImport from '../components/ClipboardImport'
 
 export default function Home() {
   const { user } = useAuth()
@@ -10,7 +9,6 @@ export default function Home() {
   const [stats, setStats] = useState({ active: 0, sold: 0, total: 0 })
   const [recentListings, setRecentListings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showImport, setShowImport] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -85,17 +83,6 @@ export default function Home() {
           Snap a New Item
         </button>
 
-        {/* Paste a listing CTA */}
-        <button
-          onClick={() => setShowImport(true)}
-          className="w-full mt-3 bg-surface border border-border hover:border-accent/40 text-text-h font-medium rounded-xl px-4 py-4 transition-colors flex items-center justify-center gap-2"
-        >
-          <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
-          </svg>
-          Paste a Listing
-        </button>
-
         {/* Shelf Scan CTA */}
         <button
           onClick={() => navigate('/shelf-scan')}
@@ -108,16 +95,6 @@ export default function Home() {
             <span className="text-[9px] font-bold bg-accent/15 text-accent px-1.5 py-0.5 rounded-full uppercase">Pro</span>
           </span>
         </button>
-
-        {/* Clipboard Import Modal */}
-        <ClipboardImport
-          isOpen={showImport}
-          onClose={() => setShowImport(false)}
-          onImport={(data) => {
-            // Navigate to snap page with imported data as URL state
-            navigate('/snap', { state: { importedListing: data } })
-          }}
-        />
 
         {/* Recent listings */}
         {!loading && recentListings.length > 0 && (
