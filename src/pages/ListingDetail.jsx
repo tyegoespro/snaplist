@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { formatForPlatform, copyForPlatform } from '../lib/clipboardFormatter'
 import { PLATFORMS } from '../lib/platforms'
-import { TappablePhoto } from '../components/PhotoViewer'
+import PhotoViewer from '../components/PhotoViewer'
 
 const CONDITIONS = {
   new: 'New',
@@ -24,6 +24,8 @@ export default function ListingDetail() {
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
   const [copiedPlatform, setCopiedPlatform] = useState(null)
+  const [viewerOpen, setViewerOpen] = useState(false)
+  const [viewerIndex, setViewerIndex] = useState(0)
 
   useEffect(() => {
     fetchListing()
@@ -141,12 +143,13 @@ export default function ListingDetail() {
         {/* Photos */}
         {photos.length > 0 ? (
           <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-none">
-            {photos.map((photo) => (
-              <TappablePhoto
+            {photos.map((photo, i) => (
+              <img
                 key={photo.id}
                 src={getPhotoUrl(photo)}
                 alt={listing.title}
-                className="w-full max-w-[300px] h-56 object-cover rounded-xl border border-border flex-shrink-0"
+                className="w-full max-w-[300px] h-56 object-cover rounded-xl border border-border flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => { setViewerIndex(i); setViewerOpen(true) }}
               />
             ))}
           </div>
@@ -362,6 +365,13 @@ export default function ListingDetail() {
           </div>
         )}
       </div>
+
+      <PhotoViewer
+        photos={photos.map((p) => ({ src: getPhotoUrl(p), alt: listing.title }))}
+        initialIndex={viewerIndex}
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+      />
     </div>
   )
 }
