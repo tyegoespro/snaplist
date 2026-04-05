@@ -125,7 +125,7 @@ export default function BulkScan() {
             price: item.price ? parseFloat(item.price) : null,
             condition: item.condition || 'good',
             category: item.category || null,
-            status: 'draft',
+            status: 'active',
             ai_data: item,
           })
           .select('id')

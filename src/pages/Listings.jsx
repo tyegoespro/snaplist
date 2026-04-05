@@ -13,10 +13,18 @@ const CONDITIONS = {
 
 const STATUS_STYLES = {
   active: 'bg-success/15 text-success',
-  draft: 'bg-warning/15 text-warning',
+  draft: 'bg-success/15 text-success',
   sold: 'bg-accent/15 text-accent',
   expired: 'bg-text/15 text-text',
   deleted: 'bg-danger/15 text-danger',
+}
+
+const STATUS_LABELS = {
+  active: 'Listed',
+  draft: 'Listed',
+  sold: 'Sold',
+  expired: 'Expired',
+  deleted: 'Deleted',
 }
 
 export default function Listings() {
@@ -88,13 +96,20 @@ export default function Listings() {
   const filtered =
     filter === 'all'
       ? listings
-      : listings.filter((l) => l.status === filter)
+      : filter === 'active'
+        ? listings.filter((l) => l.status === 'active' || l.status === 'draft')
+        : listings.filter((l) => l.status === filter)
 
   const counts = {
     all: listings.length,
-    active: listings.filter((l) => l.status === 'active').length,
+    active: listings.filter((l) => l.status === 'active' || l.status === 'draft').length,
     sold: listings.filter((l) => l.status === 'sold').length,
-    draft: listings.filter((l) => l.status === 'draft').length,
+  }
+
+  const FILTER_LABELS = {
+    all: 'All',
+    active: 'Listed',
+    sold: 'Sold',
   }
 
   if (loading) {
@@ -125,7 +140,7 @@ export default function Listings() {
                   : 'bg-surface text-text border border-border hover:text-text-h'
               }`}
             >
-              {key.charAt(0).toUpperCase() + key.slice(1)} ({count})
+              {FILTER_LABELS[key] || key} ({count})
             </button>
           ))}
         </div>
@@ -177,7 +192,7 @@ export default function Listings() {
                           STATUS_STYLES[listing.status] || ''
                         }`}
                       >
-                        {listing.status}
+                        {STATUS_LABELS[listing.status] || listing.status}
                       </span>
                     </div>
                     {listing.price && (
@@ -192,7 +207,7 @@ export default function Listings() {
 
                     {/* Actions */}
                     <div className="flex gap-2 mt-2">
-                      {listing.status === 'active' && (
+                      {(listing.status === 'active' || listing.status === 'draft') && (
                         <button
                           onClick={(e) => { e.stopPropagation(); updateStatus(listing.id, 'sold') }}
                           className="text-[11px] font-medium text-success bg-success/10 hover:bg-success/20 px-2 py-0.5 rounded-md transition-colors"

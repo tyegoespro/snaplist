@@ -22,7 +22,7 @@ export default function Home() {
       .order('created_at', { ascending: false })
 
     if (listings) {
-      const activeListings = listings.filter((l) => l.status === 'active')
+      const activeListings = listings.filter((l) => l.status === 'active' || l.status === 'draft')
       const soldListings = listings.filter((l) => l.status === 'sold')
       setStats({
         active: activeListings.length,
@@ -68,7 +68,7 @@ export default function Home() {
             <p className="text-2xl font-bold text-text-h mt-1">
               {loading ? '—' : fmtCurrency(stats.inventoryValue)}
             </p>
-            <p className="text-[10px] text-text mt-0.5">{stats.active} active listing{stats.active !== 1 ? 's' : ''}</p>
+            <p className="text-[10px] text-text mt-0.5">{stats.active} listed item{stats.active !== 1 ? 's' : ''}</p>
           </div>
           <div className="bg-surface rounded-xl p-4 border border-border">
             <p className="text-xs text-text uppercase tracking-wide">Total Earned</p>
@@ -82,7 +82,7 @@ export default function Home() {
         {/* Count stats */}
         <div className="grid grid-cols-3 gap-3 mt-3">
           {[
-            { label: 'Active', value: stats.active, color: 'text-success' },
+            { label: 'Listed', value: stats.active, color: 'text-success' },
             { label: 'Sold', value: stats.sold, color: 'text-accent' },
             { label: 'Total', value: stats.total, color: 'text-text-h' },
           ].map((stat) => (

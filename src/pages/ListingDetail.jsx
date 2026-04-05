@@ -128,11 +128,11 @@ export default function ListingDetail() {
           <div className="flex-1">
             <h1 className="text-xl font-bold text-text-h truncate">{listing.title}</h1>
             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${
-              listing.status === 'active' ? 'bg-success/15 text-success'
+              (listing.status === 'active' || listing.status === 'draft') ? 'bg-success/15 text-success'
               : listing.status === 'sold' ? 'bg-accent/15 text-accent'
               : 'bg-text/15 text-text'
             }`}>
-              {listing.status}
+              {listing.status === 'active' || listing.status === 'draft' ? 'Listed' : listing.status === 'sold' ? 'Sold' : listing.status}
             </span>
           </div>
         </div>
@@ -336,7 +336,7 @@ export default function ListingDetail() {
               >
                 ✏️ Edit
               </button>
-              {listing.status === 'active' ? (
+              {(listing.status === 'active' || listing.status === 'draft') ? (
                 <button
                   onClick={() => updateStatus('sold')}
                   className="flex-1 bg-success/15 text-success font-medium rounded-xl px-4 py-3 hover:bg-success/25 transition-colors"
