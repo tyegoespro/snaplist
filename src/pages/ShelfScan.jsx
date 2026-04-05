@@ -6,7 +6,7 @@ import { useSubscription } from '../lib/useSubscription'
 import PaywallModal from '../components/PaywallModal'
 
 /**
- * ShelfScan — bulk item detection from a single photo
+ * BulkScan — multi-item detection from a single photo
  * Takes one wide photo of a shelf/pile, AI identifies multiple items,
  * user reviews each, then batch-saves them as individual listings.
  */
@@ -24,6 +24,7 @@ export default function ShelfScan() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [showPaywall, setShowPaywall] = useState(false)
+  const [hint, setHint] = useState('')
 
   // Check subscription on mount
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function ShelfScan() {
         body: {
           images: [base64],
           mode: 'shelf-scan',
+          hint: hint.trim() || undefined,
         },
       })
 
@@ -171,6 +173,7 @@ export default function ShelfScan() {
     setSelectedItems(new Set())
     setStep('upload')
     setError(null)
+    setHint('')
   }
 
   // --- UPLOAD STEP ---
@@ -181,9 +184,9 @@ export default function ShelfScan() {
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-accent/20 to-[#8B5CF6]/20 border-2 border-dashed border-accent/50 rounded-2xl flex items-center justify-center mb-6">
             <span className="text-4xl">📦</span>
           </div>
-          <h2 className="text-xl font-bold text-text-h">Shelf Scan</h2>
+          <h2 className="text-xl font-bold text-text-h">Bulk Scan</h2>
           <p className="text-text text-sm mt-2 mb-6">
-            Take one photo of a shelf, table, or pile. AI will identify every item and create individual listings.
+            Snap a photo of multiple items. AI will identify each one and create individual listings.
           </p>
 
           {preview ? (
@@ -201,6 +204,18 @@ export default function ShelfScan() {
               </button>
             </div>
           ) : null}
+
+          {/* AI hint / prompt */}
+          <div className="mb-4 text-left">
+            <label className="text-xs text-text font-medium uppercase tracking-wide">Focus on (optional)</label>
+            <input
+              type="text"
+              value={hint}
+              onChange={(e) => setHint(e.target.value)}
+              placeholder='e.g. "just the shoes" or "electronics only"'
+              className="w-full mt-1 bg-surface border border-border rounded-xl px-4 py-3 text-sm text-text-h placeholder:text-text/30 focus:outline-none focus:border-accent transition-colors"
+            />
+          </div>
 
           <input
             ref={fileRef}
@@ -274,7 +289,7 @@ export default function ShelfScan() {
             setShowPaywall(false)
             navigate('/')
           }}
-          feature="Shelf Scan"
+          feature="Bulk Scan"
         />
       </div>
     )

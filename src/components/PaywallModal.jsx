@@ -26,7 +26,7 @@ export default function PaywallModal({ isOpen, onClose, feature = 'this feature'
       highlight: true,
       features: [
         'Everything in Free',
-        '📦 Shelf Scan — bulk listing',
+        '📦 Bulk Scan — multi-item listing',
         'Priority AI processing',
         'Unlimited listings',
         'Early access to new features',

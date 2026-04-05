@@ -104,12 +104,14 @@ serve(async (req) => {
         })
       }
 
+      const userHint = hint ? ` The user wants you to focus on: "${hint}".` : ''
+
       messages = [
         { role: 'system', content: SHELF_SCAN_PROMPT },
         {
           role: 'user',
           content: [
-            { type: 'text', text: 'Look at this photo carefully. Identify EVERY sellable item visible and generate a listing for each one. Return a JSON array.' },
+            { type: 'text', text: `Look at this photo carefully. Identify EVERY sellable item visible and generate a listing for each one. Return a JSON array.${userHint}` },
             ...imageList.map((b64: string) => ({
               type: 'image_url',
               image_url: { url: b64.startsWith('data:') ? b64 : `data:image/jpeg;base64,${b64}` },
