@@ -32,6 +32,19 @@ Return ONLY a JSON object (no code fences) with:
 - search_keywords: optimized search string for finding similar items
 If a field can't be determined, use null.`
 
+const SHELF_SCAN_PROMPT = `You are a marketplace listing expert. You are shown a photo of a shelf, table, closet, or pile containing MULTIPLE items for sale.
+Identify EVERY distinct sellable item visible in the photo. For each item, generate a complete marketplace listing.
+Return ONLY a JSON array (no markdown, no code fences) where each element has:
+- title: A compelling, SEO-friendly marketplace title (50-80 chars)
+- description: Brief marketplace description (50-150 chars)
+- price: Suggested price in USD (number only)
+- condition: One of "new", "like_new", "good", "fair", "poor"
+- category: General category
+- brand: Brand name if identifiable, or null
+- search_keywords: Optimized search string for eBay
+- confidence: How confident you are (0.0 to 1.0)
+Be thorough — identify every distinct item, even partially visible ones. Return at least 2 items.`
+
 function parseAIResponse(content: string) {
   try {
     return JSON.parse(content)
@@ -77,6 +90,30 @@ serve(async (req) => {
       messages = [
         { role: 'system', content: TEXT_PARSE_PROMPT },
         { role: 'user', content: `Extract listing data from this text:\n\n${text}` },
+      ]
+    } else if (mode === 'shelf-scan') {
+      // Shelf scan mode — detect multiple items in one photo
+      const imageList = images || (imageBase64 ? [imageBase64] : [])
+
+      if (imageList.length === 0) {
+        return new Response(JSON.stringify({ error: 'At least one image is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      messages = [
+        { role: 'system', content: SHELF_SCAN_PROMPT },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Look at this photo carefully. Identify EVERY sellable item visible and generate a listing for each one. Return a JSON array.' },
+            ...imageList.map((b64: string) => ({
+              type: 'image_url',
+              image_url: { url: b64.startsWith('data:') ? b64 : `data:image/jpeg;base64,${b64}` },
+            })),
+          ],
+        },
       ]
     } else {
       // Image identification mode

@@ -96,6 +96,19 @@ export default function Home() {
           Paste a Listing
         </button>
 
+        {/* Shelf Scan CTA */}
+        <button
+          onClick={() => navigate('/shelf-scan')}
+          className="w-full mt-3 bg-surface border border-accent/20 hover:border-accent/40 text-text-h font-medium rounded-xl px-4 py-4 transition-colors flex items-center justify-center gap-2 relative overflow-hidden group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-[#8B5CF6]/5 group-hover:from-accent/10 group-hover:to-[#8B5CF6]/10 transition-all" />
+          <span className="relative flex items-center gap-2">
+            <span className="text-lg">📦</span>
+            Shelf Scan
+            <span className="text-[9px] font-bold bg-accent/15 text-accent px-1.5 py-0.5 rounded-full uppercase">Pro</span>
+          </span>
+        </button>
+
         {/* Clipboard Import Modal */}
         <ClipboardImport
           isOpen={showImport}

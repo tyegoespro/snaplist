@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Listings from './pages/Listings'
 import ListingDetail from './pages/ListingDetail'
 import Snap from './pages/Snap'
+import ShelfScan from './pages/ShelfScan'
 import Connections from './pages/Connections'
 import Settings from './pages/Settings'
 
@@ -30,6 +31,7 @@ function ProtectedLayout() {
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingDetail />} />
           <Route path="/snap" element={<Snap />} />
+          <Route path="/shelf-scan" element={<ShelfScan />} />
           <Route path="/connections" element={<Connections />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
