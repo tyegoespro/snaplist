@@ -97,8 +97,24 @@ export default function ShelfScan() {
     try {
       const selectedList = items.filter((_, i) => selectedItems.has(i))
 
+      // Upload the shelf scan photo once
+      let storagePath = null
+      if (photo) {
+        const ext = photo.name?.split('.').pop() || 'jpg'
+        const fileName = `${user.id}/shelf-${Date.now()}.${ext}`
+        const { error: uploadErr } = await supabase.storage
+          .from('listing-photos')
+          .upload(fileName, photo, { contentType: photo.type || 'image/jpeg' })
+
+        if (!uploadErr) {
+          storagePath = fileName
+        } else {
+          console.error('Photo upload failed:', uploadErr)
+        }
+      }
+
       for (const item of selectedList) {
-        const { error: insertErr } = await supabase
+        const { data: listing, error: insertErr } = await supabase
           .from('listings')
           .insert({
             user_id: user.id,
@@ -110,9 +126,21 @@ export default function ShelfScan() {
             status: 'draft',
             ai_data: item,
           })
+          .select('id')
+          .single()
 
         if (insertErr) {
           console.error('Failed to save item:', insertErr)
+          continue
+        }
+
+        // Attach the shelf scan photo to this listing
+        if (storagePath && listing?.id) {
+          await supabase.from('listing_photos').insert({
+            listing_id: listing.id,
+            storage_path: storagePath,
+            display_order: 0,
+          })
         }
       }
 
