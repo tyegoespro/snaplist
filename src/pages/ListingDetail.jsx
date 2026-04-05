@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { formatForPlatform, copyForPlatform } from '../lib/clipboardFormatter'
+import { PLATFORMS } from '../lib/platforms'
 
 const CONDITIONS = {
   new: 'New',
@@ -20,6 +22,7 @@ export default function ListingDetail() {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
+  const [copiedPlatform, setCopiedPlatform] = useState(null)
 
   useEffect(() => {
     fetchListing()
@@ -264,6 +267,65 @@ export default function ListingDetail() {
                   })}
                 </span>
               </div>
+            </div>
+
+            {/* Post to Platform — clipboard export */}
+            <div className="bg-surface border border-border rounded-xl p-4">
+              <h3 className="text-xs text-text font-medium uppercase tracking-wide mb-3">Post to Platform</h3>
+              <p className="text-xs text-text/60 mb-3">Tap to copy your listing, then paste it in the app.</p>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(PLATFORMS)
+                  .filter(([, cfg]) => cfg.clipboardOnly)
+                  .map(([key, cfg]) => (
+                    <button
+                      key={key}
+                      onClick={async () => {
+                        const ok = await copyForPlatform(key, {
+                          title: listing.title,
+                          description: listing.description,
+                          price: listing.price,
+                          condition: listing.condition,
+                          category: listing.category,
+                          brand: listing.ai_data?.brand,
+                          size: listing.ai_data?.size,
+                        })
+                        if (ok) {
+                          setCopiedPlatform(key)
+                          setTimeout(() => setCopiedPlatform(null), 2500)
+                        }
+                      }}
+                      className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl font-medium text-sm transition-all ${
+                        copiedPlatform === key
+                          ? 'bg-success/15 text-success border border-success/30'
+                          : 'bg-bg border border-border hover:border-accent/40 text-text-h'
+                      }`}
+                    >
+                      {copiedPlatform === key ? (
+                        <>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                          </svg>
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-base">{cfg.icon || '📋'}</span>
+                          {cfg.name}
+                        </>
+                      )}
+                    </button>
+                  ))}
+              </div>
+              {copiedPlatform && PLATFORMS[copiedPlatform]?.deepLink && (
+                <a
+                  href={PLATFORMS[copiedPlatform].deepLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 w-full flex items-center justify-center gap-2 bg-accent/10 border border-accent/20 text-accent text-sm font-medium rounded-xl px-4 py-2.5 hover:bg-accent/20 transition-colors"
+                >
+                  Open {PLATFORMS[copiedPlatform].name} →
+                </a>
+              )}
             </div>
 
             {/* Actions */}
