@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 export default function Home() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [stats, setStats] = useState({ active: 0, sold: 0, total: 0 })
+  const [stats, setStats] = useState({ active: 0, sold: 0, total: 0, inventoryValue: 0, totalEarned: 0 })
   const [recentListings, setRecentListings] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -22,10 +22,14 @@ export default function Home() {
       .order('created_at', { ascending: false })
 
     if (listings) {
+      const activeListings = listings.filter((l) => l.status === 'active')
+      const soldListings = listings.filter((l) => l.status === 'sold')
       setStats({
-        active: listings.filter((l) => l.status === 'active').length,
-        sold: listings.filter((l) => l.status === 'sold').length,
+        active: activeListings.length,
+        sold: soldListings.length,
         total: listings.length,
+        inventoryValue: activeListings.reduce((sum, l) => sum + (parseFloat(l.price) || 0), 0),
+        totalEarned: soldListings.reduce((sum, l) => sum + (parseFloat(l.price) || 0), 0),
       })
       setRecentListings(listings.slice(0, 5))
     }
@@ -47,6 +51,8 @@ export default function Home() {
     ? user.user_metadata.full_name.split(' ')[0]
     : user?.email?.split('@')[0]
 
+  const fmtCurrency = (val) => val >= 1000 ? `$${(val / 1000).toFixed(1)}k` : `$${val.toFixed(0)}`
+
   return (
     <div className="flex-1 p-6">
       <div className="max-w-lg mx-auto">
@@ -55,18 +61,36 @@ export default function Home() {
         </h1>
         <p className="mt-1 text-text text-sm">Your listings at a glance</p>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 mt-6">
+        {/* Money stats */}
+        <div className="grid grid-cols-2 gap-3 mt-6">
+          <div className="bg-surface rounded-xl p-4 border border-border">
+            <p className="text-xs text-text uppercase tracking-wide">Inventory Value</p>
+            <p className="text-2xl font-bold text-text-h mt-1">
+              {loading ? '—' : fmtCurrency(stats.inventoryValue)}
+            </p>
+            <p className="text-[10px] text-text mt-0.5">{stats.active} active listing{stats.active !== 1 ? 's' : ''}</p>
+          </div>
+          <div className="bg-surface rounded-xl p-4 border border-border">
+            <p className="text-xs text-text uppercase tracking-wide">Total Earned</p>
+            <p className="text-2xl font-bold text-success mt-1">
+              {loading ? '—' : fmtCurrency(stats.totalEarned)}
+            </p>
+            <p className="text-[10px] text-text mt-0.5">{stats.sold} item{stats.sold !== 1 ? 's' : ''} sold</p>
+          </div>
+        </div>
+
+        {/* Count stats */}
+        <div className="grid grid-cols-3 gap-3 mt-3">
           {[
             { label: 'Active', value: stats.active, color: 'text-success' },
             { label: 'Sold', value: stats.sold, color: 'text-accent' },
             { label: 'Total', value: stats.total, color: 'text-text-h' },
           ].map((stat) => (
-            <div key={stat.label} className="bg-surface rounded-xl p-4 border border-border">
-              <p className={`text-2xl font-bold ${stat.color}`}>
+            <div key={stat.label} className="bg-surface rounded-xl p-3 border border-border text-center">
+              <p className={`text-xl font-bold ${stat.color}`}>
                 {loading ? '—' : stat.value}
               </p>
-              <p className="text-xs text-text mt-1">{stat.label}</p>
+              <p className="text-[10px] text-text mt-0.5">{stat.label}</p>
             </div>
           ))}
         </div>
