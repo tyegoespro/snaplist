@@ -10,7 +10,7 @@ import PaywallModal from '../components/PaywallModal'
  * Takes one wide photo of a shelf/pile, AI identifies multiple items,
  * user reviews each, then batch-saves them as individual listings.
  */
-export default function ShelfScan() {
+export default function BulkScan() {
   const { user } = useAuth()
   const { isPro, loading: subLoading } = useSubscription()
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ export default function ShelfScan() {
     setPreview(URL.createObjectURL(file))
   }
 
-  async function scanShelf() {
+  async function bulkScan() {
     if (!photo) return
     setStep('scanning')
     setError(null)
@@ -85,8 +85,8 @@ export default function ShelfScan() {
       setSelectedItems(new Set(detectedItems.map((_, i) => i)))
       setStep('review')
     } catch (err) {
-      console.error('Shelf scan error:', err)
-      setError(err.message || 'Failed to scan shelf. Try again.')
+      console.error('Bulk scan error:', err)
+      setError(err.message || 'Failed to scan. Try again.')
       setStep('upload')
     }
   }
@@ -99,11 +99,11 @@ export default function ShelfScan() {
     try {
       const selectedList = items.filter((_, i) => selectedItems.has(i))
 
-      // Upload the shelf scan photo once
+      // Upload the scan photo once
       let storagePath = null
       if (photo) {
         const ext = photo.name?.split('.').pop() || 'jpg'
-        const fileName = `${user.id}/shelf-${Date.now()}.${ext}`
+        const fileName = `${user.id}/bulk-${Date.now()}.${ext}`
         const { error: uploadErr } = await supabase.storage
           .from('listing-photos')
           .upload(fileName, photo, { contentType: photo.type || 'image/jpeg' })
@@ -136,7 +136,7 @@ export default function ShelfScan() {
           continue
         }
 
-        // Attach the shelf scan photo to this listing
+        // Attach the scan photo to this listing
         if (storagePath && listing?.id) {
           await supabase.from('listing_photos').insert({
             listing_id: listing.id,
@@ -193,7 +193,7 @@ export default function ShelfScan() {
             <div className="mb-6">
               <img
                 src={preview}
-                alt="Shelf photo"
+                alt="Scan photo"
                 className="w-full h-48 object-cover rounded-2xl border border-border shadow-lg"
               />
               <button
@@ -248,7 +248,7 @@ export default function ShelfScan() {
                 ← Retake
               </button>
               <button
-                onClick={scanShelf}
+                onClick={bulkScan}
                 className="flex-1 bg-gradient-to-r from-accent to-[#8B5CF6] hover:opacity-90 text-white font-semibold rounded-xl px-4 py-3 transition-opacity"
               >
                 🔍 Scan Items
@@ -316,7 +316,7 @@ export default function ShelfScan() {
           )}
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 border-3 border-accent border-t-transparent rounded-full animate-spin mb-6" />
-            <h2 className="text-2xl font-extrabold text-text-h mb-2">Scanning Shelf...</h2>
+            <h2 className="text-2xl font-extrabold text-text-h mb-2">Scanning Items...</h2>
             <p className="text-text text-sm opacity-70">
               AI is identifying every item in the photo
             </p>
@@ -345,7 +345,7 @@ export default function ShelfScan() {
         {preview && (
           <img
             src={preview}
-            alt="Scanned shelf"
+            alt="Scanned items"
             className="w-full h-32 object-cover rounded-2xl border border-border mb-6 opacity-60"
           />
         )}

@@ -85,7 +85,7 @@ export default function Home() {
 
         {/* Bulk Scan CTA */}
         <button
-          onClick={() => navigate('/shelf-scan')}
+          onClick={() => navigate('/bulk-scan')}
           className="w-full mt-3 bg-surface border border-accent/20 hover:border-accent/40 text-text-h font-medium rounded-xl px-4 py-4 transition-colors flex items-center justify-center gap-2 relative overflow-hidden group"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-[#8B5CF6]/5 group-hover:from-accent/10 group-hover:to-[#8B5CF6]/10 transition-all" />
