@@ -1,10 +1,47 @@
-// Supabase Edge Function: AI Item Identification
-// Moves the OpenAI API key server-side for security
+// Supabase Edge Function: AI Item Identification + Text Parsing
+// Keeps the OpenAI API key server-side for security
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+const IDENTIFICATION_PROMPT = `You are a marketplace listing expert. When shown one or more photos of an item, identify it and generate a complete marketplace listing. 
+Use all provided angles (front, back, tags, details) to provide the most accurate assessment. 
+Return ONLY a JSON object (no markdown, no code fences) with these fields:
+- title: A compelling, SEO-friendly marketplace title (50-80 chars)
+- description: Detailed marketplace description highlighting features, condition, and selling points (100-300 chars). Mention details seen in different angles if relevant.
+- price: Suggested price in USD (number only, based on typical resale value)
+- condition: One of "new", "like_new", "good", "fair", "poor"
+- category: General category (e.g. "Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Collectibles")
+- search_keywords: An optimized search string for finding similar "Sold" items on eBay (e.g. "Vintage Ferrari T-Shirt Red XL")
+- brand: Brand name if identifiable, or null
+- size: Size if applicable (clothing, shoes), or null
+- confidence: How confident you are in the identification (0.0 to 1.0)`
+
+const TEXT_PARSE_PROMPT = `You are a listing data extractor. Given raw text (pasted from a marketplace listing, a screenshot OCR, or user notes), extract structured listing fields. 
+Return ONLY a JSON object (no code fences) with:
+- title: string (compelling marketplace title)
+- description: string (item description)
+- price: number (USD, best guess)
+- condition: one of "new", "like_new", "good", "fair", "poor"
+- category: string
+- brand: string or null
+- size: string or null
+- search_keywords: optimized search string for finding similar items
+If a field can't be determined, use null.`
+
+function parseAIResponse(content: string) {
+  try {
+    return JSON.parse(content)
+  } catch {
+    const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/)
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[1].trim())
+    }
+    throw new Error('Failed to parse AI response')
+  }
 }
 
 serve(async (req) => {
@@ -13,21 +50,62 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64 } = await req.json()
+    const body = await req.json()
+    const { images, hint, mode, text } = body
+    // Support legacy single-image format
+    const imageBase64 = body.imageBase64
 
-    if (!imageBase64) {
-      return new Response(JSON.stringify({ error: 'imageBase64 is required' }), {
-        status: 400,
+    const openaiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openaiKey) {
+      return new Response(JSON.stringify({ error: 'OPENAI_API_KEY not configured on server' }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    const openaiKey = Deno.env.get('OPENAI_API_KEY')
-    if (!openaiKey) {
-      return new Response(JSON.stringify({ error: 'OPENAI_API_KEY not configured' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+    let messages: any[]
+
+    if (mode === 'text-parse') {
+      // Text parsing mode (for ClipboardImport)
+      if (!text) {
+        return new Response(JSON.stringify({ error: 'text is required for text-parse mode' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      messages = [
+        { role: 'system', content: TEXT_PARSE_PROMPT },
+        { role: 'user', content: `Extract listing data from this text:\n\n${text}` },
+      ]
+    } else {
+      // Image identification mode
+      const imageList = images || (imageBase64 ? [imageBase64] : [])
+
+      if (imageList.length === 0) {
+        return new Response(JSON.stringify({ error: 'At least one image is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      const userText = hint
+        ? `Identify this item knowing it is "${hint}". The user has provided ${imageList.length} photos from different angles. Generate a marketplace listing for it, pricing it accurately for the current market.`
+        : `Identify this item. The user has provided ${imageList.length} photos from different angles. Generate a marketplace listing for it.`
+
+      messages = [
+        { role: 'system', content: IDENTIFICATION_PROMPT },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: userText },
+            ...imageList.map((b64: string) => ({
+              type: 'image_url',
+              image_url: { url: b64.startsWith('data:') ? b64 : `data:image/jpeg;base64,${b64}` },
+            })),
+          ],
+        },
+      ]
     }
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -38,25 +116,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a marketplace listing expert. When shown a photo of an item, identify it and generate a complete marketplace listing. Return ONLY a JSON object (no markdown, no code fences) with these fields:
-- title: A compelling, SEO-friendly marketplace title (50-80 chars)
-- description: Detailed marketplace description highlighting features, condition, and selling points (100-300 chars)
-- price: Suggested price in USD (number only, based on typical resale value)
-- condition: One of "new", "like_new", "good", "fair", "poor"
-- category: General category (e.g. "Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Collectibles")
-- confidence: How confident you are in the identification (0.0 to 1.0)`,
-          },
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: 'Identify this item and generate a marketplace listing for it.' },
-              { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
-            ],
-          },
-        ],
+        messages,
         max_tokens: 500,
       }),
     })
@@ -71,18 +131,7 @@ serve(async (req) => {
 
     const data = await response.json()
     const content = data.choices?.[0]?.message?.content
-
-    let parsed
-    try {
-      parsed = JSON.parse(content)
-    } catch {
-      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/)
-      if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[1].trim())
-      } else {
-        throw new Error('Failed to parse AI response')
-      }
-    }
+    const parsed = parseAIResponse(content)
 
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import { identifyItem } from '../lib/ai'
-
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
+import { parseListingText } from '../lib/ai'
 
 /**
  * ClipboardImport — modal for pasting a listing URL or raw text
- * Parses Mercari URLs or uses GPT-4o to extract structured listing data from text
+ * Parses via server-side Edge Function (no API key in browser)
  */
 export default function ClipboardImport({ isOpen, onClose, onImport }) {
   const [input, setInput] = useState('')
@@ -27,69 +25,6 @@ export default function ClipboardImport({ isOpen, onClose, onImport }) {
     return 'text'
   }
 
-  // Parse raw text via GPT-4o
-  async function parseWithAI(text) {
-    if (!OPENAI_API_KEY) {
-      throw new Error('AI parsing requires an OpenAI API key')
-    }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a listing data extractor. Given raw text (pasted from a marketplace listing, a screenshot OCR, or user notes), extract structured listing fields. 
-Return ONLY a JSON object (no code fences) with:
-- title: string (compelling marketplace title)
-- description: string (item description)
-- price: number (USD, best guess)
-- condition: one of "new", "like_new", "good", "fair", "poor"
-- category: string
-- brand: string or null
-- size: string or null
-If a field can't be determined, use null.`,
-          },
-          {
-            role: 'user',
-            content: `Extract listing data from this text:\n\n${text}`,
-          },
-        ],
-        max_tokens: 500,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`AI parse failed: ${response.status}`)
-    }
-
-    const data = await response.json()
-    const content = data.choices?.[0]?.message?.content
-
-    try {
-      return JSON.parse(content)
-    } catch {
-      const match = content.match(/```(?:json)?\s*([\s\S]*?)```/)
-      if (match) return JSON.parse(match[1].trim())
-      throw new Error('Could not parse AI response')
-    }
-  }
-
-  // Attempt to fetch and parse a Mercari listing page
-  async function parseMercariUrl(url) {
-    // Mercari pages are client-rendered, so we can't directly scrape them
-    // Instead, we'll use GPT-4o to parse whatever we can extract
-    // For now, use the URL as context and ask the user to paste the listing text
-    throw new Error(
-      'Direct URL parsing requires a server proxy. Please copy the listing text from Mercari and paste it here instead.'
-    )
-  }
-
   async function handleParse() {
     const trimmed = input.trim()
     if (!trimmed) return
@@ -101,20 +36,8 @@ If a field can't be determined, use null.`,
       const detectedSource = detectSource(trimmed)
       setSource(detectedSource)
 
-      let result
-
-      if (detectedSource === 'mercari') {
-        // Try URL parse, fall back to AI text parse
-        try {
-          result = await parseMercariUrl(trimmed)
-        } catch {
-          // URL parsing failed, try treating the whole input as text
-          result = await parseWithAI(trimmed)
-        }
-      } else {
-        // For raw text or unrecognized URLs, use AI parsing
-        result = await parseWithAI(trimmed)
-      }
+      // All parsing goes through the server-side Edge Function
+      const result = await parseListingText(trimmed)
 
       if (result) {
         onImport({
