@@ -47,12 +47,23 @@ export default function ShelfScan() {
     setError(null)
 
     try {
-      // Convert to base64
+      // Compress image before sending (phone cameras produce huge files)
       const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = reject
-        reader.readAsDataURL(photo)
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const MAX = 1200 // max dimension
+          let w = img.width, h = img.height
+          if (w > h && w > MAX) { h = h * MAX / w; w = MAX }
+          else if (h > MAX) { w = w * MAX / h; h = MAX }
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, w, h)
+          resolve(canvas.toDataURL('image/jpeg', 0.7))
+        }
+        img.onerror = reject
+        img.src = URL.createObjectURL(photo)
       })
 
       // Call the Edge Function with shelf-scan mode

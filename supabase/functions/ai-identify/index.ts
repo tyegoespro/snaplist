@@ -68,6 +68,8 @@ serve(async (req) => {
     // Support legacy single-image format
     const imageBase64 = body.imageBase64
 
+    console.log('ai-identify called:', { mode: mode || 'default', imageCount: (images || []).length || (imageBase64 ? 1 : 0), hasText: !!text })
+
     const openaiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openaiKey) {
       return new Response(JSON.stringify({ error: 'OPENAI_API_KEY not configured on server' }), {
@@ -152,14 +154,15 @@ serve(async (req) => {
         Authorization: `Bearer ${openaiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages,
-        max_tokens: 500,
+        max_tokens: mode === 'shelf-scan' ? 2000 : 800,
       }),
     })
 
     if (!response.ok) {
       const err = await response.text()
+      console.error('OpenAI API error:', response.status, err)
       return new Response(JSON.stringify({ error: `OpenAI API error: ${response.status}`, details: err }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -168,12 +171,14 @@ serve(async (req) => {
 
     const data = await response.json()
     const content = data.choices?.[0]?.message?.content
+    console.log('AI response received, length:', content?.length)
     const parsed = parseAIResponse(content)
 
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
+    console.error('Edge function error:', error.message, error.stack)
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
