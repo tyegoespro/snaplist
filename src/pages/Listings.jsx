@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { TappablePhoto } from '../components/PhotoViewer'
 
 const CONDITIONS = {
   new: 'New',
@@ -167,7 +168,7 @@ export default function Listings() {
                   {/* Thumbnail */}
                   <div className="w-20 h-20 rounded-lg overflow-hidden bg-surface-2 flex-shrink-0">
                     {photoUrl ? (
-                      <img
+                      <TappablePhoto
                         src={photoUrl}
                         alt={listing.title}
                         className="w-full h-full object-cover"
