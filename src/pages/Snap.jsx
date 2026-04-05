@@ -1,13 +1,15 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { identifyItem } from '../lib/ai'
 import { PLATFORMS, getConnections, crossPost } from '../lib/platforms'
+import { copyForPlatform } from '../lib/clipboardFormatter'
 
 export default function Snap() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const fileRef = useRef()
   const videoRef = useRef()
   const canvasRef = useRef()
@@ -33,6 +35,8 @@ export default function Snap() {
   const [aiHint, setAiHint] = useState('')
   const [connections, setConnections] = useState({})
   const [selectedPlatforms, setSelectedPlatforms] = useState([])
+  const [clipboardToast, setClipboardToast] = useState(null)
+  const [copiedPlatform, setCopiedPlatform] = useState(null)
 
   // Load connected platforms
   useEffect(() => {
@@ -44,6 +48,24 @@ export default function Snap() {
       })
     }
   }, [user])
+
+  // Check for imported listing from ClipboardImport
+  useEffect(() => {
+    const imported = location.state?.importedListing
+    if (imported) {
+      setAiData(imported)
+      setForm({
+        title: imported.title || '',
+        description: imported.description || '',
+        price: imported.price?.toString() || '',
+        condition: imported.condition || 'good',
+        category: imported.category || '',
+      })
+      setStep('editor')
+      // Clear the navigation state so refresh doesn't re-import
+      window.history.replaceState({}, '')
+    }
+  }, [location.state])
 
   // Stop camera stream when leaving camera mode
   const stopCamera = useCallback(() => {
@@ -710,12 +732,91 @@ export default function Snap() {
           <p className="text-danger text-sm mt-4">{error}</p>
         )}
 
-        {/* Platform toggles */}
+        {/* Clipboard Toast */}
+        {clipboardToast && (
+          <div className="fixed bottom-24 left-4 right-4 z-50 flex justify-center animate-in slide-in-from-bottom duration-300">
+            <div className="bg-success/90 backdrop-blur-md text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2 max-w-sm">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+              {clipboardToast}
+            </div>
+          </div>
+        )}
+
+        {/* Copy for Platform (clipboard-only platforms) */}
+        <div className="mt-6">
+          <label className="text-xs text-text font-medium uppercase tracking-wide">Copy for Platform</label>
+          <p className="text-[10px] text-text/50 mt-0.5 mb-3">One tap to copy your listing, then paste it in the app</p>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries(PLATFORMS)
+              .filter(([, p]) => p.clipboardOnly && p.available)
+              .map(([key, platform]) => {
+                const isCopied = copiedPlatform === key
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={async () => {
+                      const listing = {
+                        title: form.title,
+                        description: form.description,
+                        price: form.price,
+                        condition: form.condition,
+                        category: form.category,
+                        brand: aiData?.brand || null,
+                        size: aiData?.size || null,
+                      }
+                      const success = await copyForPlatform(key, listing)
+                      if (success) {
+                        setCopiedPlatform(key)
+                        setClipboardToast(`Copied for ${platform.name}! Open the app and paste.`)
+                        setTimeout(() => {
+                          setClipboardToast(null)
+                          setCopiedPlatform(null)
+                        }, 3500)
+                      }
+                    }}
+                    className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border transition-all text-sm font-medium ${
+                      isCopied
+                        ? 'bg-success/10 border-success/40 text-success'
+                        : 'bg-surface border-border text-text-h hover:border-accent/40'
+                    }`}
+                  >
+                    <span className="text-base">{platform.icon}</span>
+                    <span className="flex-1 text-left truncate">
+                      {isCopied ? '✓ Copied!' : platform.name}
+                    </span>
+                    {!isCopied && (
+                      <svg className="w-4 h-4 text-text/30" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                      </svg>
+                    )}
+                  </button>
+                )
+              })}
+          </div>
+
+          {/* Deep link to open app */}
+          {copiedPlatform && PLATFORMS[copiedPlatform]?.deepLink && (
+            <a
+              href={PLATFORMS[copiedPlatform].deepLink}
+              className="block mt-3 text-center text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
+            >
+              Open {PLATFORMS[copiedPlatform].name} →
+            </a>
+          )}
+        </div>
+
+        {/* API Platform toggles (connected platforms) */}
         {Object.keys(connections).length > 0 && (
           <div className="mt-5">
-            <label className="text-xs text-text font-medium uppercase tracking-wide">Post to Platforms</label>
-            <div className="mt-2 space-y-2">
-              {Object.entries(PLATFORMS).map(([key, platform]) => {
+            <label className="text-xs text-text font-medium uppercase tracking-wide">Direct Post</label>
+            <p className="text-[10px] text-text/50 mt-0.5 mb-3">Auto-post to connected platforms</p>
+            <div className="space-y-2">
+              {Object.entries(PLATFORMS)
+                .filter(([, p]) => !p.clipboardOnly)
+                .map(([key, platform]) => {
                 const isConnected = connections[key]?.status === 'active'
                 if (!isConnected) return null
 
