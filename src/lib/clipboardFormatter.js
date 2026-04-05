@@ -50,15 +50,22 @@ function formatMercari(listing) {
   const price = listing.price ? `$${parseFloat(listing.price).toFixed(0)}` : ''
 
   return [
+    `── TITLE ──`,
     title,
     '',
+    `── DESCRIPTION ──`,
     listing.description || '',
     '',
-    `Condition: ${condition}`,
-    price ? `Price: ${price}` : '',
-    listing.category ? `Category: ${listing.category}` : '',
+    `── CONDITION ──`,
+    condition,
+    '',
+    price ? `── PRICE ──` : '',
+    price || '',
+    listing.category ? '' : '',
+    listing.category ? `── CATEGORY ──` : '',
+    listing.category || '',
   ]
-    .filter(Boolean)
+    .filter((line) => line !== false && line !== undefined)
     .join('\n')
 }
 
@@ -70,16 +77,25 @@ function formatGrailed(listing) {
   const price = listing.price ? `$${parseFloat(listing.price).toFixed(0)}` : ''
 
   return [
+    `── TITLE ──`,
     title,
     '',
+    `── DESCRIPTION ──`,
     listing.description || '',
     '',
-    `Condition: ${condition}`,
-    price ? `Price: ${price}` : '',
-    listing.brand ? `Brand: ${listing.brand}` : '',
-    listing.category ? `Category: ${listing.category}` : '',
+    listing.brand ? `── BRAND ──` : '',
+    listing.brand || '',
+    listing.brand ? '' : '',
+    `── CONDITION ──`,
+    condition,
+    '',
+    price ? `── PRICE ──` : '',
+    price || '',
+    listing.category ? '' : '',
+    listing.category ? `── CATEGORY ──` : '',
+    listing.category || '',
   ]
-    .filter(Boolean)
+    .filter((line) => line !== false && line !== undefined)
     .join('\n')
 }
 
@@ -91,17 +107,28 @@ function formatPoshmark(listing) {
   const price = listing.price ? `$${parseFloat(listing.price).toFixed(0)}` : ''
 
   return [
+    `── TITLE ──`,
     title,
     '',
+    `── DESCRIPTION ──`,
     listing.description || '',
     '',
-    listing.brand ? `Brand: ${listing.brand}` : '',
-    listing.size ? `Size: ${listing.size}` : '',
-    `Condition: ${condition}`,
-    price ? `Price: ${price}` : '',
-    listing.category ? `Category: ${listing.category}` : '',
+    listing.brand ? `── BRAND ──` : '',
+    listing.brand || '',
+    listing.brand ? '' : '',
+    listing.size ? `── SIZE ──` : '',
+    listing.size || '',
+    listing.size ? '' : '',
+    `── CONDITION ──`,
+    condition,
+    '',
+    price ? `── PRICE ──` : '',
+    price || '',
+    listing.category ? '' : '',
+    listing.category ? `── CATEGORY ──` : '',
+    listing.category || '',
   ]
-    .filter(Boolean)
+    .filter((line) => line !== false && line !== undefined)
     .join('\n')
 }
 
@@ -113,15 +140,22 @@ function formatDepop(listing) {
   const price = listing.price ? `$${parseFloat(listing.price).toFixed(0)}` : ''
 
   return [
+    `── TITLE ──`,
     title,
     '',
+    `── DESCRIPTION ──`,
     listing.description || '',
     '',
-    `Condition: ${condition}`,
-    price ? `Price: ${price}` : '',
-    listing.brand ? `Brand: ${listing.brand}` : '',
+    listing.brand ? `── BRAND ──` : '',
+    listing.brand || '',
+    listing.brand ? '' : '',
+    `── CONDITION ──`,
+    condition,
+    '',
+    price ? `── PRICE ──` : '',
+    price || '',
   ]
-    .filter(Boolean)
+    .filter((line) => line !== false && line !== undefined)
     .join('\n')
 }
 
@@ -131,15 +165,22 @@ function formatGeneric(listing) {
   const price = listing.price ? `$${parseFloat(listing.price).toFixed(0)}` : ''
 
   return [
+    `── TITLE ──`,
     listing.title || '',
     '',
+    `── DESCRIPTION ──`,
     listing.description || '',
     '',
-    `Condition: ${condition}`,
-    price ? `Price: ${price}` : '',
-    listing.category ? `Category: ${listing.category}` : '',
+    `── CONDITION ──`,
+    condition,
+    '',
+    price ? `── PRICE ──` : '',
+    price || '',
+    listing.category ? '' : '',
+    listing.category ? `── CATEGORY ──` : '',
+    listing.category || '',
   ]
-    .filter(Boolean)
+    .filter((line) => line !== false && line !== undefined)
     .join('\n')
 }
 
