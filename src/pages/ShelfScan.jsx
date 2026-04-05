@@ -32,6 +32,8 @@ export default function ShelfScan() {
     }
   }, [subLoading, isPro])
 
+  const cameraRef = useRef()
+
   function handleFileSelect(e) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -168,6 +170,14 @@ export default function ShelfScan() {
             className="hidden"
             onChange={handleFileSelect}
           />
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
 
           {error && (
             <div className="mb-4 bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-xs text-danger">
@@ -175,22 +185,41 @@ export default function ShelfScan() {
             </div>
           )}
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => fileRef.current?.click()}
-              className="flex-1 bg-surface border border-border hover:bg-surface-2 text-text-h font-medium rounded-xl px-4 py-3 transition-colors"
-            >
-              📁 Choose Photo
-            </button>
-            {preview && (
+          {preview ? (
+            <div className="flex gap-3">
+              <button
+                onClick={resetAll}
+                className="flex-1 bg-surface border border-border hover:bg-surface-2 text-text-h font-medium rounded-xl px-4 py-3 transition-colors"
+              >
+                ← Retake
+              </button>
               <button
                 onClick={scanShelf}
                 className="flex-1 bg-gradient-to-r from-accent to-[#8B5CF6] hover:opacity-90 text-white font-semibold rounded-xl px-4 py-3 transition-opacity"
               >
                 🔍 Scan Items
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <button
+                onClick={() => cameraRef.current?.click()}
+                className="flex-1 bg-gradient-to-r from-accent to-[#8B5CF6] hover:opacity-90 text-white font-semibold rounded-xl px-4 py-3 transition-opacity flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
+                </svg>
+                Take Photo
+              </button>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="flex-1 bg-surface border border-border hover:bg-surface-2 text-text-h font-medium rounded-xl px-4 py-3 transition-colors"
+              >
+                📁 Gallery
+              </button>
+            </div>
+          )}
 
           <button
             onClick={() => navigate('/')}
