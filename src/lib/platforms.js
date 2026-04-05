@@ -22,7 +22,7 @@ export const PLATFORMS = {
     description: 'Sell fast with instant pricing',
     available: true,
     clipboardOnly: true,
-    deepLink: 'mercari://',
+    deepLink: 'https://www.mercari.com/sell/',
     appStoreUrl: 'https://apps.apple.com/app/mercari/id896130944',
   },
   poshmark: {
@@ -32,7 +32,7 @@ export const PLATFORMS = {
     description: 'Fashion & lifestyle marketplace',
     available: true,
     clipboardOnly: true,
-    deepLink: 'poshmark://',
+    deepLink: 'https://poshmark.com/create-listing',
     appStoreUrl: 'https://apps.apple.com/app/poshmark/id470412147',
   },
   grailed: {
@@ -42,7 +42,7 @@ export const PLATFORMS = {
     description: 'Premium menswear & streetwear marketplace',
     available: true,
     clipboardOnly: true,
-    deepLink: 'grailed://',
+    deepLink: 'https://www.grailed.com/sell',
     appStoreUrl: 'https://apps.apple.com/app/grailed/id1069498074',
   },
   depop: {
@@ -52,7 +52,7 @@ export const PLATFORMS = {
     description: 'Sell to Gen-Z fashion-forward buyers',
     available: true,
     clipboardOnly: true,
-    deepLink: 'depop://',
+    deepLink: 'https://www.depop.com/sell/',
     appStoreUrl: 'https://apps.apple.com/app/depop/id518684914',
   },
   facebook: {
@@ -62,7 +62,7 @@ export const PLATFORMS = {
     description: 'Reach local buyers in your area',
     available: false,
     clipboardOnly: true,
-    deepLink: 'fb://marketplace',
+    deepLink: 'https://www.facebook.com/marketplace/create/',
     appStoreUrl: null,
   },
 }
