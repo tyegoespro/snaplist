@@ -408,35 +408,33 @@ export default function Snap() {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pb-12">
-              <div className="flex items-center justify-between max-w-sm mx-auto">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 pt-8 pb-28">
+              <div className="flex items-center justify-center gap-10 max-w-xs mx-auto">
                 {/* Cancel/Back */}
                 <button
                   onClick={() => {
                     if (photos.length > 0 && !window.confirm('Discard photos and exit?')) return
                     resetAll()
                   }}
-                  className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+                  className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors flex-shrink-0"
                 >
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                   </svg>
                 </button>
 
-                {/* Shutter button wrapper */}
-                <div className="relative">
-                  <button
-                    onClick={captureFromCamera}
-                    disabled={photos.length >= 8}
-                    className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
-                      photos.length >= 8 ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-105 active:scale-95'
-                    }`}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-white border-[6px] border-white/30 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full border-2 border-gray-200" />
-                    </div>
-                  </button>
-                </div>
+                {/* Shutter button */}
+                <button
+                  onClick={captureFromCamera}
+                  disabled={photos.length >= 8}
+                  className={`w-20 h-20 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
+                    photos.length >= 8 ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:scale-105 active:scale-95'
+                  }`}
+                >
+                  <div className="w-16 h-16 rounded-full bg-white border-[6px] border-white/30 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full border-2 border-gray-200" />
+                  </div>
+                </button>
 
                 {/* Finish / Done */}
                 <button
@@ -445,7 +443,7 @@ export default function Snap() {
                     processPhotos(photos)
                   }}
                   disabled={photos.length === 0}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                     photos.length === 0 
                       ? 'bg-white/5 text-white/20 border border-white/10' 
                       : 'bg-accent text-white shadow-lg shadow-accent/40 animate-in zoom-in-50'
