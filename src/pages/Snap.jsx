@@ -698,7 +698,7 @@ export default function Snap() {
   return (
     <div className="flex-1 p-6 overflow-y-auto">
       <div className="max-w-lg mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-text-h">Edit Listing</h1>
           {aiData && (
             <span className="text-xs bg-accent/15 text-accent px-2.5 py-1 rounded-full font-medium">
@@ -706,6 +706,36 @@ export default function Snap() {
             </span>
           )}
         </div>
+
+        {/* Brand verification warning */}
+        {aiData?.brand_confirmed === false && aiData?.brand !== 'Unbranded' && (
+          <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 mb-4 flex items-start gap-2">
+            <span className="text-sm mt-0.5">⚠️</span>
+            <div className="text-xs text-text">
+              <span className="font-bold text-warning">Brand not verified</span> — No visible branding was found. The design may resemble a known brand but cannot be confirmed from the photos.
+            </div>
+          </div>
+        )}
+
+        {/* Auth notes */}
+        {aiData?.auth_notes && (
+          <div className="bg-danger/10 border border-danger/20 rounded-xl p-3 mb-4 flex items-start gap-2">
+            <span className="text-sm mt-0.5">🔍</span>
+            <div className="text-xs text-text">
+              <span className="font-bold text-danger">Authenticity Note</span> — {aiData.auth_notes}
+            </div>
+          </div>
+        )}
+
+        {/* Photo tips for better ID */}
+        {aiData?.photo_tips && (
+          <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 mb-4 flex items-start gap-2">
+            <span className="text-sm mt-0.5">📸</span>
+            <div className="text-xs text-text">
+              <span className="font-bold text-accent">Need better photos</span> — {aiData.photo_tips}
+            </div>
+          </div>
+        )}
 
         {/* Photo previews */}
         <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
