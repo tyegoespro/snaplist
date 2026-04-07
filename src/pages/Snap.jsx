@@ -11,6 +11,7 @@ export default function Snap() {
   const navigate = useNavigate()
   const location = useLocation()
   const fileRef = useRef()
+  const cameraFileRef = useRef()
   const videoRef = useRef()
   const canvasRef = useRef()
   const streamRef = useRef(null)
@@ -789,14 +790,31 @@ export default function Snap() {
               </button>
             </div>
           ))}
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="w-20 h-20 flex-shrink-0 border-2 border-dashed border-border rounded-xl flex items-center justify-center text-text hover:border-accent hover:text-accent transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </button>
+          {photos.length < 8 && (
+            <>
+              {/* Add from gallery */}
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="w-20 h-20 flex-shrink-0 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center text-text hover:border-accent hover:text-accent transition-colors gap-1"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" />
+                </svg>
+                <span className="text-[9px] font-bold uppercase tracking-tight">Gallery</span>
+              </button>
+              {/* Take new photo */}
+              <button
+                onClick={() => cameraFileRef.current?.click()}
+                className="w-20 h-20 flex-shrink-0 border-2 border-dashed border-accent/40 rounded-xl flex flex-col items-center justify-center text-accent/70 hover:border-accent hover:text-accent transition-colors gap-1"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
+                </svg>
+                <span className="text-[9px] font-bold uppercase tracking-tight">Camera</span>
+              </button>
+            </>
+          )}
           <input
             ref={fileRef}
             type="file"
@@ -805,6 +823,22 @@ export default function Snap() {
             className="hidden"
             onChange={(e) => {
               const newFiles = Array.from(e.target.files)
+              setPhotos((prev) => [...prev, ...newFiles].slice(0, 8))
+              setPreviews((prev) => [
+                ...prev,
+                ...newFiles.map((f) => URL.createObjectURL(f)),
+              ].slice(0, 8))
+            }}
+          />
+          <input
+            ref={cameraFileRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              const newFiles = Array.from(e.target.files)
+              if (newFiles.length === 0) return
               setPhotos((prev) => [...prev, ...newFiles].slice(0, 8))
               setPreviews((prev) => [
                 ...prev,
