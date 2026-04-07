@@ -1,6 +1,39 @@
 import { useState, useEffect, useRef } from 'react'
 
 /**
+ * Save a photo from a URL — uses Share API on iOS for "Save Image", falls back to download
+ */
+async function savePhotoFromUrl(src, filename = 'snaplist-photo.jpg') {
+  try {
+    const response = await fetch(src)
+    const blob = await response.blob()
+    const file = new File([blob], filename, { type: blob.type || 'image/jpeg' })
+
+    // Try Web Share API first (iOS shows "Save Image")
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] })
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return
+      }
+    }
+
+    // Fallback: trigger download
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  } catch (err) {
+    console.error('Save photo failed:', err)
+  }
+}
+
+/**
  * Photo pop-up with swipe support for multiple images
  */
 export default function PhotoViewer({ photos, initialIndex = 0, isOpen, onClose }) {
@@ -94,11 +127,23 @@ export default function PhotoViewer({ photos, initialIndex = 0, isOpen, onClose 
           className="w-full max-h-[70vh] object-contain bg-black/5"
         />
 
-        {/* Bottom bar: dots + caption */}
+        {/* Bottom bar: save + dots + caption */}
         <div className="px-4 py-3 border-t border-border flex items-center justify-between">
-          {current.alt ? (
-            <p className="text-xs text-text truncate flex-1">{current.alt}</p>
-          ) : <span />}
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {/* Save button */}
+            <button
+              onClick={() => savePhotoFromUrl(current.src, `snaplist-photo-${index + 1}.jpg`)}
+              className="w-8 h-8 bg-surface-2 border border-border rounded-full flex items-center justify-center text-text hover:text-accent hover:border-accent transition-colors flex-shrink-0"
+              title="Save photo"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </button>
+            {current.alt ? (
+              <p className="text-xs text-text truncate">{current.alt}</p>
+            ) : <span />}
+          </div>
           {hasMultiple && (
             <div className="flex gap-1.5 ml-3">
               {photos.map((_, i) => (
