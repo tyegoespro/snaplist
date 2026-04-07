@@ -177,12 +177,27 @@ export default function Snap() {
     pinchStartDist.current = 0
   }
 
-  // Download photo to device
-  const downloadPhoto = (file, index) => {
+  // Save photo — uses Share API on mobile (shows "Save Image" option on iOS)
+  const savePhoto = async (file, index) => {
+    const fileName = file.name || `snaplist-photo-${index + 1}.jpg`
+
+    // Try Web Share API first (iOS Safari shows "Save Image" in share sheet)
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [new File([file], fileName, { type: 'image/jpeg' })],
+        })
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return // User cancelled share sheet
+      }
+    }
+
+    // Fallback: trigger file download
     const url = URL.createObjectURL(file)
     const a = document.createElement('a')
     a.href = url
-    a.download = file.name || `snaplist-photo-${index + 1}.jpg`
+    a.download = fileName
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -661,7 +676,7 @@ export default function Snap() {
               )}
               {/* Save to device */}
               <button
-                onClick={(e) => { e.stopPropagation(); downloadPhoto(photos[i], i) }}
+                onClick={(e) => { e.stopPropagation(); savePhoto(photos[i], i) }}
                 className="absolute -top-1 -right-1 w-6 h-6 bg-surface border border-border rounded-full flex items-center justify-center text-text hover:text-accent hover:border-accent transition-colors shadow-md"
                 title="Save to device"
               >
