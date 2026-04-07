@@ -37,6 +37,15 @@ export default function Snap() {
   const [selectedPlatforms, setSelectedPlatforms] = useState([])
   const [clipboardToast, setClipboardToast] = useState(null)
   const [copiedPlatform, setCopiedPlatform] = useState(null)
+  // Camera enhancements
+  const [flashOn, setFlashOn] = useState(false)
+  const [torchSupported, setTorchSupported] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState(1)
+  const [zoomRange, setZoomRange] = useState({ min: 1, max: 1 })
+  const [showZoom, setShowZoom] = useState(false)
+  const zoomTimerRef = useRef(null)
+  const pinchStartDist = useRef(0)
+  const pinchStartZoom = useRef(1)
 
   // Load connected platforms
   useEffect(() => {
@@ -83,6 +92,10 @@ export default function Snap() {
   const openCamera = async () => {
     setCameraError(null)
     setStep('camera')
+    setFlashOn(false)
+    setZoomLevel(1)
+    setTorchSupported(false)
+    setZoomRange({ min: 1, max: 1 })
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
@@ -92,6 +105,18 @@ export default function Snap() {
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
+
+      // Detect torch and zoom capabilities
+      const track = stream.getVideoTracks()[0]
+      if (track) {
+        try {
+          const caps = track.getCapabilities?.()
+          if (caps?.torch) setTorchSupported(true)
+          if (caps?.zoom) {
+            setZoomRange({ min: caps.zoom.min, max: caps.zoom.max })
+          }
+        } catch (_) { /* capabilities not supported */ }
+      }
     } catch (err) {
       console.error('Camera error:', err)
       setCameraError(
@@ -100,6 +125,68 @@ export default function Snap() {
           : 'Could not access camera. Try using the Gallery option instead.'
       )
     }
+  }
+
+  // Toggle flash/torch
+  const toggleFlash = async () => {
+    const track = streamRef.current?.getVideoTracks()[0]
+    if (!track) return
+    const next = !flashOn
+    try {
+      await track.applyConstraints({ advanced: [{ torch: next }] })
+      setFlashOn(next)
+    } catch (_) { /* torch failed */ }
+  }
+
+  // Apply zoom level
+  const applyZoom = async (level) => {
+    const track = streamRef.current?.getVideoTracks()[0]
+    if (!track) return
+    const clamped = Math.min(Math.max(level, zoomRange.min), zoomRange.max)
+    try {
+      await track.applyConstraints({ advanced: [{ zoom: clamped }] })
+      setZoomLevel(clamped)
+      setShowZoom(true)
+      clearTimeout(zoomTimerRef.current)
+      zoomTimerRef.current = setTimeout(() => setShowZoom(false), 1500)
+    } catch (_) { /* zoom failed */ }
+  }
+
+  // Pinch-to-zoom handlers
+  const handlePinchStart = (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      pinchStartDist.current = Math.hypot(dx, dy)
+      pinchStartZoom.current = zoomLevel
+    }
+  }
+
+  const handlePinchMove = (e) => {
+    if (e.touches.length === 2 && pinchStartDist.current > 0) {
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.hypot(dx, dy)
+      const scale = dist / pinchStartDist.current
+      applyZoom(pinchStartZoom.current * scale)
+    }
+  }
+
+  const handlePinchEnd = () => {
+    pinchStartDist.current = 0
+  }
+
+  // Download photo to device
+  const downloadPhoto = (file, index) => {
+    const url = URL.createObjectURL(file)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = file.name || `snaplist-photo-${index + 1}.jpg`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   // Capture photo from webcam
@@ -391,22 +478,49 @@ export default function Snap() {
               playsInline
               muted
               className="flex-1 object-cover w-full"
+              onTouchStart={handlePinchStart}
+              onTouchMove={handlePinchMove}
+              onTouchEnd={handlePinchEnd}
+              style={{ touchAction: 'none' }}
             />
             <canvas ref={canvasRef} className="hidden" />
 
-            {/* Camera controls overlay */}
-            <div className="absolute top-6 left-0 right-0 p-4 flex justify-center pointer-events-none">
+            {/* Top controls: photo counter + flash */}
+            <div className="absolute top-6 left-0 right-0 px-4 flex items-center justify-between pointer-events-none">
               <div className="bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 text-white text-xs font-bold tracking-widest uppercase flex items-center gap-2 pointer-events-auto">
                 {photos.length > 0 ? (
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-                    {photos.length} Photos Captured
+                    {photos.length} Photos
                   </span>
                 ) : (
                   'Take first photo'
                 )}
               </div>
+
+              {/* Flash toggle */}
+              {torchSupported && (
+                <button
+                  onClick={toggleFlash}
+                  className={`pointer-events-auto w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    flashOn
+                      ? 'bg-yellow-400 text-black shadow-lg shadow-yellow-400/40'
+                      : 'bg-black/40 backdrop-blur-md text-white border border-white/10'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill={flashOn ? 'currentColor' : 'none'} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                  </svg>
+                </button>
+              )}
             </div>
+
+            {/* Zoom indicator */}
+            {showZoom && zoomRange.max > 1 && (
+              <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-white text-xs font-bold">
+                {zoomLevel.toFixed(1)}x
+              </div>
+            )}
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-6 pt-8 pb-12 safe-bottom">
               <div className="flex items-center justify-center gap-10 max-w-xs mx-auto">
@@ -545,6 +659,16 @@ export default function Snap() {
                   Thumbnail
                 </div>
               )}
+              {/* Save to device */}
+              <button
+                onClick={(e) => { e.stopPropagation(); downloadPhoto(photos[i], i) }}
+                className="absolute -top-1 -right-1 w-6 h-6 bg-surface border border-border rounded-full flex items-center justify-center text-text hover:text-accent hover:border-accent transition-colors shadow-md"
+                title="Save to device"
+              >
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+              </button>
             </div>
           ))}
           <button
