@@ -7,43 +7,68 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const IDENTIFICATION_PROMPT = `You are a marketplace listing expert. When shown one or more photos of an item, identify it and generate a complete marketplace listing. 
-Use all provided angles (front, back, tags, details) to provide the most accurate assessment. 
-Return ONLY a JSON object (no markdown, no code fences) with these fields:
-- title: A compelling, SEO-friendly marketplace title (50-80 chars)
-- description: Detailed marketplace description highlighting features, condition, and selling points (100-300 chars). Mention details seen in different angles if relevant.
-- price: Suggested price in USD (number only, based on typical resale value)
-- condition: One of "new", "like_new", "good", "fair", "poor"
-- category: General category (e.g. "Electronics", "Clothing", "Home & Garden", "Sports", "Toys", "Books", "Collectibles")
-- search_keywords: An optimized search string for finding similar "Sold" items on eBay (e.g. "Vintage Ferrari T-Shirt Red XL")
-- brand: Brand name if identifiable, or null
-- size: Size if applicable (clothing, shoes), or null
-- confidence: How confident you are in the identification (0.0 to 1.0)`
+const IDENTIFICATION_PROMPT = `You are a professional resale product identification expert. Every item shown to you needs to be analyzed through a resale lens, not just described visually. Your job is product identification and listing optimization.
 
-const TEXT_PARSE_PROMPT = `You are a listing data extractor. Given raw text (pasted from a marketplace listing, a screenshot OCR, or user notes), extract structured listing fields. 
+For every item, analyze and return ONLY a JSON object (no markdown, no code fences) with these fields:
+- title: A keyword-optimized listing title for eBay/Poshmark/Mercari. Front-load brand name, include collection, style, color, and material. Example: "Dooney & Bourke Signature Jacquard Flap Shoulder Bag Brown Tan Leather Solid Brass". Every word should be something a buyer would search for. (50-100 chars)
+- description: Detailed resale description covering brand, collection/line, style/silhouette, model, colorway, materials, hardware, lining, era/age, and condition notes. Mention patina, wear, stains, scuffs, hardware tarnish, or missing elements if visible. (150-400 chars)
+- price: Suggested resale price in USD (number only) based on what similar items actually sell for on resale platforms
+- condition: One of "new", "like_new", "good", "fair", "poor"
+- category: Specific resale category (e.g. "Designer Handbags", "Vintage Clothing", "Sneakers", "Electronics", "Home & Garden", "Books", "Collectibles")
+- brand: Brand name identified from logos, monograms, stamps, tags, labels, hardware engravings, stitching patterns, print patterns, font styles, or brand-specific design language. If you recognize the pattern/design but can't see a logo, still name the brand. Never return null if you can make an educated guess.
+- collection: Collection, line, or series name if recognizable (e.g. "Signature Jacquard", "Pebble Grain", "Florentine"), or null
+- style: Marketplace-accurate style term (hobo, satchel, crossbody, tote, messenger, clutch, shoulder bag, bucket bag, flap bag, sneaker, boot, polo, etc.), or null
+- model: Model name or number if identifiable from tags/stamps/known catalogs, or null
+- color: Resale-standard color names including trim, hardware, and lining colors (e.g. "Brown/Tan with Gold-tone Hardware"), or null
+- materials: Specific materials — leather type (vachetta, pebble grain, saffiano), fabric (jacquard, canvas, nylon), hardware finish (solid brass, nickel, gold-tone), lining material, or null
+- era: Approximate era/age based on construction, hardware, design cues, label style, tag format, or null
+- size: Size if applicable, or null
+- search_keywords: An optimized search string for finding similar "Sold" items on eBay (e.g. "Dooney Bourke Signature Jacquard Shoulder Bag Brown Leather")
+- confidence: How confident you are in the identification (0.0 to 1.0)
+- auth_notes: If the item appears counterfeit or suspicious, explain why. Otherwise null.
+- photo_tips: If you cannot fully identify the brand/item, tell the user exactly what photo to take next (tag location, serial number, stamp, label) so you can ID it. Otherwise null.
+
+Rules:
+- Never just describe what you see. Always attempt to identify the product.
+- Think like a reseller at a thrift store flipping an item over looking for a label.
+- Prioritize searchability — every word in the title should be something a buyer would type.
+- If counterfeit or suspicious, flag it in auth_notes.`
+
+const TEXT_PARSE_PROMPT = `You are a resale listing data extractor. Given raw text (pasted from a marketplace listing, a screenshot OCR, or user notes), extract structured listing fields optimized for resale.
 Return ONLY a JSON object (no code fences) with:
-- title: string (compelling marketplace title)
-- description: string (item description)
-- price: number (USD, best guess)
+- title: string (keyword-optimized resale title, front-load brand name)
+- description: string (detailed resale description)
+- price: number (USD, based on resale value)
 - condition: one of "new", "like_new", "good", "fair", "poor"
-- category: string
+- category: string (specific resale category)
 - brand: string or null
+- collection: string or null (product line/collection name)
+- style: string or null (marketplace-accurate style term)
+- model: string or null
+- color: string or null
+- materials: string or null
 - size: string or null
-- search_keywords: optimized search string for finding similar items
+- search_keywords: optimized eBay search string
 If a field can't be determined, use null.`
 
-const SHELF_SCAN_PROMPT = `You are a marketplace listing expert. You are shown a photo of a shelf, table, closet, or pile containing MULTIPLE items for sale.
-Identify EVERY distinct sellable item visible in the photo. For each item, generate a complete marketplace listing.
+const SHELF_SCAN_PROMPT = `You are a professional resale product identification expert. You are shown a photo of a shelf, table, closet, or pile containing MULTIPLE items for sale.
+Identify EVERY distinct sellable item visible in the photo. For each item, analyze through a resale lens — identify brands, collections, materials, and generate keyword-optimized listings.
+
 Return ONLY a JSON array (no markdown, no code fences) where each element has:
-- title: A compelling, SEO-friendly marketplace title (50-80 chars)
-- description: Brief marketplace description (50-150 chars)
-- price: Suggested price in USD (number only)
+- title: Keyword-optimized listing title. Front-load brand, include style, color, material. Every word should be searchable. (50-100 chars)
+- description: Brief resale description covering brand, materials, condition (50-200 chars)
+- price: Suggested resale price in USD (number only)
 - condition: One of "new", "like_new", "good", "fair", "poor"
-- category: General category
-- brand: Brand name if identifiable, or null
-- search_keywords: Optimized search string for eBay
+- category: Specific resale category
+- brand: Brand name — identify from logos, patterns, design language, tags. Still name the brand even without a visible logo if you recognize the design.
+- search_keywords: Optimized eBay search string
 - confidence: How confident you are (0.0 to 1.0)
-Be thorough — identify every distinct item, even partially visible ones. Return at least 2 items.`
+
+Rules:
+- Never just describe what you see. Always attempt to identify every product.
+- Think like a reseller scanning a shelf for valuable items.
+- Prioritize searchability in titles.
+- Be thorough — identify every distinct item, even partially visible ones. Return at least 2 items.`
 
 function parseAIResponse(content: string) {
   try {
