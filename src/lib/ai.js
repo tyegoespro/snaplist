@@ -68,3 +68,30 @@ export async function parseListingText(text) {
 
   return data
 }
+
+/**
+ * Refine an existing listing with user feedback
+ * Sends current listing + user correction + photos to the AI for a better result
+ */
+export async function refineItem(currentListing, feedback, imageFiles = []) {
+  let base64Images = []
+  if (imageFiles.length > 0) {
+    base64Images = await Promise.all(
+      imageFiles.slice(0, 3).map((f) => fileToBase64(f))
+    )
+  }
+
+  const { data, error } = await supabase.functions.invoke('ai-identify', {
+    body: {
+      mode: 'refine',
+      currentListing,
+      feedback,
+      images: base64Images.length > 0 ? base64Images : undefined,
+    },
+  })
+
+  if (error) throw error
+  if (data?.error) throw new Error(data.error)
+
+  return data
+}

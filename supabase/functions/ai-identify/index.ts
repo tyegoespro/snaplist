@@ -70,6 +70,22 @@ Rules:
 - Prioritize searchability in titles.
 - Be thorough — identify every distinct item, even partially visible ones. Return at least 2 items.`
 
+const REFINE_PROMPT = `You are a professional resale product identification expert. The user already has a listing but wants to improve it based on their feedback. They know the item better than the initial AI scan.
+
+Take the current listing data and the user's corrections/additions, then return an IMPROVED version.
+Return ONLY a JSON object (no markdown, no code fences) with the same fields as the original listing:
+- title: Keyword-optimized listing title, incorporating the user's corrections
+- description: Improved resale description with the user's additional details
+- price: Updated resale price if the user's info changes the value
+- condition, category, brand, collection, style, model, color, materials, era, size, search_keywords, confidence
+
+Rules:
+- Trust the user's corrections over the original AI assessment
+- If the user says it's a specific brand, use that brand
+- Update the title, description, and search_keywords to reflect the corrections
+- Adjust the price if the brand/model/condition info changes the value
+- Keep all fields from the original that weren't corrected`
+
 function parseAIResponse(content: string) {
   try {
     return JSON.parse(content)
@@ -89,7 +105,7 @@ serve(async (req) => {
 
   try {
     const body = await req.json()
-    const { images, hint, mode, text } = body
+    const { images, hint, mode, text, currentListing, feedback } = body
     // Support legacy single-image format
     const imageBase64 = body.imageBase64
 
@@ -144,6 +160,34 @@ serve(async (req) => {
           ],
         },
       ]
+    } else if (mode === 'refine') {
+      // Refine mode — improve an existing listing with user feedback
+      if (!currentListing || !feedback) {
+        return new Response(JSON.stringify({ error: 'currentListing and feedback are required for refine mode' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+
+      const imageList = images || []
+      const userContent: any[] = [
+        { type: 'text', text: `Current listing data:\n${JSON.stringify(currentListing, null, 2)}\n\nUser's feedback/corrections: "${feedback}"\n\nGenerate an improved listing incorporating the user's feedback.` },
+      ]
+
+      // Include photos if provided for re-analysis
+      if (imageList.length > 0) {
+        imageList.forEach((b64: string) => {
+          userContent.push({
+            type: 'image_url',
+            image_url: { url: b64.startsWith('data:') ? b64 : `data:image/jpeg;base64,${b64}` },
+          })
+        })
+      }
+
+      messages = [
+        { role: 'system', content: REFINE_PROMPT },
+        { role: 'user', content: userContent },
+      ]
     } else {
       // Image identification mode
       const imageList = images || (imageBase64 ? [imageBase64] : [])
@@ -183,7 +227,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages,
-        max_tokens: mode === 'shelf-scan' ? 2000 : 800,
+        max_tokens: (mode === 'shelf-scan' || mode === 'refine') ? 2000 : 800,
       }),
     })
 

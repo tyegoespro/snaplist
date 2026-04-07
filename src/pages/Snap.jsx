@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import { identifyItem } from '../lib/ai'
+import { identifyItem, refineItem } from '../lib/ai'
 import { PLATFORMS, getConnections, crossPost } from '../lib/platforms'
 import { copyForPlatform } from '../lib/clipboardFormatter'
 
@@ -46,6 +46,11 @@ export default function Snap() {
   const zoomTimerRef = useRef(null)
   const pinchStartDist = useRef(0)
   const pinchStartZoom = useRef(1)
+  // AI refine
+  const [refineText, setRefineText] = useState('')
+  const [refining, setRefining] = useState(false)
+  const [refineCount, setRefineCount] = useState(0)
+  const MAX_REFINES = 3
 
   // Load connected platforms
   useEffect(() => {
@@ -313,6 +318,35 @@ export default function Snap() {
       console.error('AI identification failed:', err)
       setError('AI identification failed. You can fill in the details manually.')
       setStep('editor')
+    }
+  }
+
+  // Refine listing with AI feedback
+  const handleRefine = async () => {
+    if (!refineText.trim() || refining) return
+    setRefining(true)
+    setError(null)
+    try {
+      const result = await refineItem(
+        { ...form, ...aiData },
+        refineText.trim(),
+        photos.slice(0, 3)
+      )
+      setAiData(result)
+      setForm({
+        title: result.title || form.title,
+        description: result.description || form.description,
+        price: result.price?.toString() || form.price,
+        condition: result.condition || form.condition,
+        category: result.category || form.category,
+      })
+      setRefineCount((c) => c + 1)
+      setRefineText('')
+    } catch (err) {
+      console.error('Refine failed:', err)
+      setError('Refine failed — try editing manually or try again.')
+    } finally {
+      setRefining(false)
     }
   }
 
@@ -710,6 +744,55 @@ export default function Snap() {
             }}
           />
         </div>
+
+        {/* Refine with AI */}
+        {aiData && refineCount < MAX_REFINES && (
+          <div className="bg-surface-2/50 border border-border rounded-2xl p-4 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-base">🤖</span>
+                <h3 className="text-sm font-bold text-text-h">Refine with AI</h3>
+              </div>
+              <span className="text-[10px] text-text bg-surface px-2 py-0.5 rounded-full">
+                {MAX_REFINES - refineCount} left
+              </span>
+            </div>
+            <p className="text-xs text-text mb-3 opacity-70">
+              Tell the AI what it got wrong or missed — brand, model, condition, etc.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={refineText}
+                onChange={(e) => setRefineText(e.target.value)}
+                placeholder="e.g. Coach bag, vintage 1990s, leather"
+                className="flex-1 bg-surface border border-border rounded-xl px-3 py-2.5 text-sm text-text-h placeholder:text-text/30 focus:outline-none focus:border-accent transition-colors"
+                disabled={refining}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && refineText.trim() && !refining) {
+                    handleRefine()
+                  }
+                }}
+              />
+              <button
+                onClick={handleRefine}
+                disabled={refining || !refineText.trim()}
+                className="bg-accent hover:bg-accent-hover text-white font-medium rounded-xl px-4 py-2.5 text-sm transition-colors disabled:opacity-50 flex items-center gap-1.5 flex-shrink-0"
+              >
+                {refining ? (
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>✨ Refine</>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+        {refineCount >= MAX_REFINES && (
+          <div className="text-xs text-text/50 text-center mb-6">
+            AI refinements used up — you can still edit fields manually above
+          </div>
+        )}
 
         {/* Market Comps Card */}
         {aiData?.search_keywords && (
