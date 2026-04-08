@@ -39,3 +39,4 @@ dist-ssr
 .npm-cache/
 .home/
 .vercel
+.skills-temp
