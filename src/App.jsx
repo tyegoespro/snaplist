@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import BottomNav from './components/BottomNav'
+import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import Listings from './pages/Listings'
@@ -21,7 +22,7 @@ function ProtectedLayout() {
     )
   }
 
-  if (!user) return <Navigate to="/login" replace />
+  if (!user) return <Navigate to="/welcome" replace />
 
   return (
     <>
@@ -41,6 +42,13 @@ function ProtectedLayout() {
   )
 }
 
+function LandingRoute() {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (user) return <Navigate to="/" replace />
+  return <Landing />
+}
+
 function LoginRoute() {
   const { user, loading } = useAuth()
   if (loading) return null
@@ -53,6 +61,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route path="/welcome" element={<LandingRoute />} />
           <Route path="/login" element={<LoginRoute />} />
           <Route path="/*" element={<ProtectedLayout />} />
         </Routes>
