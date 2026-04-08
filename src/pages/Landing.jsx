@@ -182,18 +182,90 @@ export default function Landing() {
       </section>
 
       {/* ─── STATS BAR ─── */}
-      <section style={{ borderTop: '1px solid rgba(139,92,246,0.08)', borderBottom: '1px solid rgba(139,92,246,0.08)', padding: '56px 24px', marginTop: 64 }}>
+      <section style={{ borderTop: '1px solid rgba(139,92,246,0.08)', borderBottom: '1px solid rgba(139,92,246,0.08)', padding: '48px 24px', marginTop: 64 }}>
         <div style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, textAlign: 'center' }}>
           {[
             { value: <AnimatedCounter end={10} suffix="s" />, label: 'Avg Listing Time' },
-            { value: <AnimatedCounter end={94} suffix="%" />, label: 'ID Accuracy' },
-            { value: <AnimatedCounter end={6} />, label: 'Platforms' },
+            { value: <AnimatedCounter end={94} suffix="%" />, label: 'AI Accuracy' },
+            { value: <AnimatedCounter end={50} suffix="K+" />, label: 'Items Listed' },
           ].map((stat, i) => (
             <div key={i}>
               <div style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 900, color: i === 1 ? '#8b5cf6' : '#f8fafc', marginBottom: 4 }}>{stat.value}</div>
               <div style={{ fontSize: 12, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ─── MARKETPLACE LOGO MARQUEE ─── */}
+      <section style={{ padding: '48px 0 56px', overflow: 'hidden' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32, padding: '0 24px' }}>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.12em' }}>List everywhere, instantly</p>
+        </div>
+        
+        {/* Infinite scroll marquee */}
+        <div style={{ position: 'relative' }}>
+          {/* Edge gradient masks */}
+          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to right, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to left, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
+          
+          <div style={{ display: 'flex', animation: 'marquee 25s linear infinite', width: 'max-content' }}
+            onMouseEnter={e => e.currentTarget.style.animationPlayState = 'paused'}
+            onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}
+          >
+            {/* Double the items for seamless loop */}
+            {[...Array(2)].map((_, setIdx) => (
+              <div key={setIdx} style={{ display: 'flex', gap: 48, alignItems: 'center', paddingRight: 48 }}>
+                {[
+                  { name: 'eBay', color: '#e53238', secondColor: '#0064d2', letters: [
+                    { char: 'e', color: '#e53238' }, { char: 'B', color: '#0064d2' }, { char: 'a', color: '#f5af02' }, { char: 'y', color: '#86b817' }
+                  ]},
+                  { name: 'Poshmark', color: '#c83268' },
+                  { name: 'Mercari', color: '#4dc5f2' },
+                  { name: 'Facebook', subtext: 'Marketplace', color: '#1877f2' },
+                  { name: 'Depop', color: '#ff2300' },
+                  { name: 'OfferUp', color: '#00ab80' },
+                ].map((platform, i) => (
+                  <div key={`${setIdx}-${i}`} style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                    minWidth: 140, cursor: 'default',
+                    transition: 'all 0.3s ease',
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)' }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
+                  >
+                    {/* Platform icon circle */}
+                    <div style={{
+                      width: 56, height: 56, borderRadius: 16,
+                      background: `${platform.color}15`,
+                      border: `1px solid ${platform.color}25`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'all 0.3s ease',
+                    }}>
+                      {platform.letters ? (
+                        <span style={{ fontSize: 20, fontWeight: 900, fontStyle: 'italic', letterSpacing: '-0.5px' }}>
+                          {platform.letters.map((l, li) => (
+                            <span key={li} style={{ color: l.color }}>{l.char}</span>
+                          ))}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: platform.name === 'Facebook' ? 16 : 18, fontWeight: 800, color: platform.color }}>
+                          {platform.name === 'Facebook' ? 'f' : platform.name.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                    {/* Platform name */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{platform.name}</div>
+                      {platform.subtext && (
+                        <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>{platform.subtext}</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -500,6 +572,10 @@ export default function Landing() {
         @keyframes timelineGlow {
           0% { left: 0%; }
           100% { left: calc(100% - 80px); }
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         * { box-sizing: border-box; margin: 0; }
         img { -webkit-user-drag: none; }
