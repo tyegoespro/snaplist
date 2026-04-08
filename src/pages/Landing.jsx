@@ -216,53 +216,59 @@ export default function Landing() {
             </a>
           </div>
 
-          {/* Floating mockup card */}
-          <div className="relative max-w-lg mx-auto">
-            <div className="relative bg-surface border border-border rounded-3xl p-5 shadow-2xl shadow-black/40">
-              <div className="flex gap-4 items-start mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-800/30 to-amber-600/10 border border-border flex items-center justify-center">
-                  <svg className="w-8 h-8 text-amber-500/60" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                  </svg>
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="text-xs text-accent font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                    <SparklesIcon className="w-3 h-3" /> AI Identified
+          {/* Hero image + Floating mockup card */}
+          <div className="relative max-w-2xl mx-auto">
+            {/* Studio hero image */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/50 border border-border/30">
+              <img src="/images/landing/hero.png" alt="AI-powered product analysis" className="w-full h-auto" />
+              <div className="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent" />
+            </div>
+
+            {/* Floating mockup card overlay */}
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md">
+              <div className="relative bg-surface/95 backdrop-blur-xl border border-border rounded-2xl p-4 shadow-2xl shadow-black/40">
+                <div className="flex gap-3 items-start mb-3">
+                  <img src="/images/landing/verify.png" alt="Brand detail" className="w-16 h-16 rounded-xl object-cover border border-border" />
+                  <div className="flex-1 text-left">
+                    <div className="text-[10px] text-accent font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                      <SparklesIcon className="w-3 h-3" /> AI Identified
+                    </div>
+                    <div className="text-xs font-bold text-text-h mb-0.5">Coach Signature Canvas Crossbody Bag</div>
+                    <div className="text-[10px] text-text opacity-70">Brand verified &middot; Like new</div>
                   </div>
-                  <div className="text-sm font-bold text-text-h mb-0.5">Coach Signature Canvas Crossbody Bag Brown Leather Trim</div>
-                  <div className="text-xs text-text opacity-70">Brand verified &middot; Like new condition</div>
                 </div>
-              </div>
-              <div className="flex gap-3 mb-3">
-                <div className="flex-1 bg-surface-2 rounded-xl p-3 text-center border border-border/50">
-                  <div className="text-[10px] text-text uppercase tracking-tight opacity-60">AI Price</div>
-                  <div className="text-lg font-black text-accent">$89</div>
+                <div className="flex gap-2 mb-2">
+                  <div className="flex-1 bg-surface-2 rounded-lg p-2 text-center border border-border/50">
+                    <div className="text-[9px] text-text uppercase opacity-60">AI Price</div>
+                    <div className="text-sm font-black text-accent">$89</div>
+                  </div>
+                  <div className="flex-1 bg-surface-2 rounded-lg p-2 text-center border border-border/50">
+                    <div className="text-[9px] text-text uppercase opacity-60">Market</div>
+                    <div className="text-sm font-bold text-text-h">$95</div>
+                  </div>
+                  <div className="flex-1 bg-surface-2 rounded-lg p-2 text-center border border-border/50">
+                    <div className="text-[9px] text-text uppercase opacity-60">Confidence</div>
+                    <div className="text-sm font-bold text-green-400">94%</div>
+                  </div>
                 </div>
-                <div className="flex-1 bg-surface-2 rounded-xl p-3 text-center border border-border/50">
-                  <div className="text-[10px] text-text uppercase tracking-tight opacity-60">Market Avg</div>
-                  <div className="text-lg font-bold text-text-h">$95</div>
+                <div className="flex gap-1.5">
+                  <div className="flex-1 bg-accent/10 border border-accent/20 rounded-lg py-1.5 text-center text-[10px] font-bold text-accent">eBay</div>
+                  <div className="flex-1 bg-accent/10 border border-accent/20 rounded-lg py-1.5 text-center text-[10px] font-bold text-accent">Poshmark</div>
+                  <div className="flex-1 bg-accent/10 border border-accent/20 rounded-lg py-1.5 text-center text-[10px] font-bold text-accent">Mercari</div>
                 </div>
-                <div className="flex-1 bg-surface-2 rounded-xl p-3 text-center border border-border/50">
-                  <div className="text-[10px] text-text uppercase tracking-tight opacity-60">Confidence</div>
-                  <div className="text-lg font-bold text-green-400">94%</div>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <div className="flex-1 bg-accent/10 border border-accent/20 rounded-xl py-2 text-center text-xs font-bold text-accent">eBay</div>
-                <div className="flex-1 bg-accent/10 border border-accent/20 rounded-xl py-2 text-center text-xs font-bold text-accent">Poshmark</div>
-                <div className="flex-1 bg-accent/10 border border-accent/20 rounded-xl py-2 text-center text-xs font-bold text-accent">Mercari</div>
               </div>
             </div>
 
-            <div className="absolute -top-4 -right-4 bg-green-500/20 border border-green-500/30 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-lg animate-float">
+            <div className="absolute top-4 -right-4 bg-green-500/20 border border-green-500/30 rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-lg animate-float">
               <ShieldIcon className="w-3.5 h-3.5 text-green-400" />
               <span className="text-xs font-bold text-green-400">Brand Verified</span>
             </div>
-            <div className="absolute -bottom-3 -left-4 bg-surface border border-border rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-lg" style={{ animationDelay: '2s', animation: 'float 6s ease-in-out infinite' }}>
+            <div className="absolute top-1/2 -left-4 bg-surface border border-border rounded-xl px-3 py-1.5 flex items-center gap-1.5 shadow-lg" style={{ animationDelay: '2s', animation: 'float 6s ease-in-out infinite' }}>
               <ChartIcon className="w-3.5 h-3.5 text-accent" />
               <span className="text-xs font-bold text-text-h">3 comps found</span>
             </div>
           </div>
+          <div className="h-12" /> {/* spacer for floating card */}
         </div>
       </section>
 
@@ -286,6 +292,31 @@ export default function Landing() {
               <AnimatedCounter end={6} />
             </div>
             <div className="text-xs sm:text-sm text-text opacity-60 uppercase tracking-wider">Platforms supported</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Image Showcase Strip */}
+      <section className="py-16 px-6 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+            {[
+              { src: '/images/landing/snap.png', label: 'Snap & Capture' },
+              { src: '/images/landing/ai.png', label: 'AI Analysis' },
+              { src: '/images/landing/refine.png', label: 'Detail Inspection' },
+              { src: '/images/landing/verify.png', label: 'Brand Verification' },
+              { src: '/images/landing/export.png', label: 'Multi-Platform' },
+            ].map((img, i) => (
+              <div key={i} className="flex-shrink-0 w-64 snap-center group">
+                <div className="relative rounded-2xl overflow-hidden border border-border/30 shadow-lg shadow-black/20 group-hover:border-accent/30 transition-all group-hover:-translate-y-1">
+                  <img src={img.src} alt={img.label} className="w-full h-40 object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-bg/90 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3">
+                    <span className="text-xs font-bold text-text-h">{img.label}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -379,8 +410,15 @@ export default function Landing() {
               </ul>
             </div>
 
-            {/* AI comparison card */}
+            {/* AI visualization + comparison cards */}
             <div className="space-y-4">
+              {/* Neural network visual */}
+              <div className="relative rounded-2xl overflow-hidden border border-accent/20 shadow-lg">
+                <img src="/images/landing/ai.png" alt="AI neural network analysis" className="w-full h-48 object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg/80 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-xs font-bold text-accent">Real-time AI Analysis</div>
+              </div>
+
               <div className="bg-danger/5 border border-danger/20 rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs bg-danger/20 text-danger font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
