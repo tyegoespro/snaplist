@@ -35,14 +35,6 @@ function AnimatedCounter({ end, suffix = '', duration = 2000 }) {
 export default function Landing() {
   const navigate = useNavigate()
   const [scrollY, setScrollY] = useState(0)
-  const stepsScrollRef = useRef(null)
-  const [parallaxX, setParallaxX] = useState(0)
-
-  const handleStepsScroll = () => {
-    if (stepsScrollRef.current) {
-      setParallaxX(stepsScrollRef.current.scrollLeft * 0.3)
-    }
-  }
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -295,132 +287,105 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS — GLASSMORPHISM PARALLAX SCROLLER ─── */}
-      <section id="how-it-works" style={{ padding: '80px 0', overflow: 'hidden' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+      {/* ─── HOW IT WORKS — VERTICAL PARALLAX TIMELINE ─── */}
+      <section id="how-it-works" style={{ padding: '80px 24px 100px' }}>
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
             <h2 style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 900, color: '#f8fafc', marginBottom: 12, letterSpacing: '-0.02em' }}>How It Works</h2>
             <p style={{ color: '#94a3b8', maxWidth: 400, margin: '0 auto' }}>From photo to sold in four simple steps</p>
           </div>
-        </div>
 
-        {/* Parallax container */}
-        <div style={{ position: 'relative' }}>
-          {/* Parallax background layer */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            overflow: 'hidden', pointerEvents: 'none', zIndex: 0,
-          }}>
+          {/* Vertical timeline */}
+          <div style={{ position: 'relative' }}>
+            {/* Center timeline line */}
             <div style={{
-              position: 'absolute', top: -40, left: -100, right: -100, bottom: -40,
-              background: `url('/images/landing/ai-brain.png') center/cover no-repeat`,
-              opacity: 0.06,
-              transform: `translateX(-${parallaxX}px)`,
-              transition: 'transform 0.1s linear',
-              filter: 'blur(2px)',
+              position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2,
+              transform: 'translateX(-50%)',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(139,92,246,0.3) 5%, rgba(139,92,246,0.3) 95%, transparent 100%)',
             }} />
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(90deg, #0a0a12 0%, transparent 15%, transparent 85%, #0a0a12 100%)',
-            }} />
-          </div>
 
-          {/* Timeline connector */}
-          <div style={{
-            position: 'absolute', top: '50%', left: '10%', right: '10%',
-            height: 2, zIndex: 1,
-            background: 'linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.3) 10%, rgba(139,92,246,0.3) 90%, transparent 100%)',
-            transform: 'translateY(-20px)',
-          }}>
-            <div style={{
-              position: 'absolute', top: -3, width: 80, height: 8,
-              background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.6), transparent)',
-              borderRadius: 4,
-              animation: 'timelineGlow 4s ease-in-out infinite',
-            }} />
-          </div>
-
-          {/* Horizontal scroll container */}
-          <div
-            ref={stepsScrollRef}
-            onScroll={handleStepsScroll}
-            style={{
-              display: 'flex', gap: 24, padding: '20px 24px 32px',
-              overflowX: 'auto', overflowY: 'hidden',
-              scrollSnapType: 'x mandatory',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
-              WebkitOverflowScrolling: 'touch',
-              position: 'relative', zIndex: 2,
-            }}
-          >
-            {/* Left spacer for centering */}
-            <div style={{ minWidth: 'calc(50vw - 560px)', flexShrink: 0 }} />
-
+            {/* Steps */}
             {[
-              { num: '01', title: 'Snap', desc: 'Point your camera at any item — sneakers, watches, electronics, anything', img: '/images/landing/step-snap.png', accent: '#8b5cf6' },
-              { num: '02', title: 'Identify', desc: 'AI instantly identifies brand, model, condition & market value', img: '/images/landing/step-identify.png', accent: '#a78bfa' },
-              { num: '03', title: 'Refine', desc: 'Review the AI analysis and correct anything it missed', img: '/images/landing/step-refine.png', accent: '#c084fc' },
-              { num: '04', title: 'List', desc: 'One-tap export to eBay, Poshmark, Mercari & more', img: '/images/landing/step-list.png', accent: '#e879f9' },
-            ].map((step, i) => (
-              <div key={i} style={{
-                minWidth: 260, maxWidth: 280, flex: '0 0 auto',
-                scrollSnapAlign: 'center',
-                background: 'rgba(15, 15, 30, 0.45)',
-                backdropFilter: 'blur(24px) saturate(1.8)',
-                WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
-                border: '1px solid rgba(139,92,246,0.15)',
-                borderRadius: 24, overflow: 'hidden',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                cursor: 'default',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)',
-              }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = `${step.accent}55`
-                  e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
-                  e.currentTarget.style.boxShadow = `0 20px 48px rgba(139,92,246,0.15), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px ${step.accent}22`
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)'
-                }}
-              >
-                <div style={{ position: 'relative', height: 170, overflow: 'hidden' }}>
-                  <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,15,30,0.95) 0%, rgba(15,15,30,0.2) 50%, transparent 100%)' }} />
-                  <div style={{
-                    position: 'absolute', top: 14, left: 14,
-                    background: 'rgba(10,10,20,0.6)', backdropFilter: 'blur(12px)',
-                    borderRadius: 10, padding: '5px 12px',
-                    border: `1px solid ${step.accent}33`,
-                  }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Step {step.num}</span>
+              { num: '01', title: 'Snap a Photo', desc: 'Point your camera at any item you want to sell — sneakers, watches, electronics, vintage finds, designer bags. SnapList works with everything.', img: '/images/landing/step-snap.png', accent: '#8b5cf6' },
+              { num: '02', title: 'AI Identifies Everything', desc: 'Our AI instantly recognizes the brand, model, condition, and current market value. It sees details most sellers miss — from serial numbers to material quality.', img: '/images/landing/step-identify.png', accent: '#a78bfa' },
+              { num: '03', title: 'Refine & Perfect', desc: 'Review the AI-generated listing. Edit title, description, pricing — or tell the AI what it missed and it\'ll update instantly. You\'re always in control.', img: '/images/landing/step-refine.png', accent: '#c084fc' },
+              { num: '04', title: 'List & Sell', desc: 'One tap to export your polished listing to eBay, Poshmark, Mercari, Facebook Marketplace, Depop, or OfferUp. Formatted perfectly for each platform.', img: '/images/landing/step-list.png', accent: '#e879f9' },
+            ].map((step, i) => {
+              const isEven = i % 2 === 0
+              // Parallax: each image shifts slightly based on scroll position
+              const parallaxOffset = scrollY * 0.04 * (i % 2 === 0 ? 1 : -1)
+
+              return (
+                <div key={i} style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 60px 1fr',
+                  gap: 0, alignItems: 'center',
+                  marginBottom: i < 3 ? 80 : 0,
+                  minHeight: 320,
+                }}>
+                  {/* Left side */}
+                  <div style={{ order: isEven ? 1 : 3, padding: isEven ? '0 32px 0 0' : '0 0 0 32px' }}>
+                    {isEven ? (
+                      /* Image on left */
+                      <div style={{
+                        position: 'relative', borderRadius: 20, overflow: 'hidden',
+                        border: `1px solid ${step.accent}20`,
+                        boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px ${step.accent}10`,
+                        transform: `translateY(${parallaxOffset}px)`,
+                        transition: 'transform 0.1s linear',
+                      }}>
+                        <img src={step.img} alt={step.title} style={{ width: '100%', height: 240, objectFit: 'cover', display: 'block' }} />
+                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, transparent 50%, ${step.accent}15 100%)` }} />
+                      </div>
+                    ) : (
+                      /* Text on left */
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Step {step.num}</div>
+                        <h3 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#f8fafc', marginBottom: 14, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h3>
+                        <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{step.desc}</p>
+                      </div>
+                    )}
                   </div>
-                  <div style={{
-                    position: 'absolute', bottom: -7, left: '50%', transform: 'translateX(-50%)',
-                    width: 14, height: 14, borderRadius: '50%',
-                    background: step.accent, border: '3px solid #0a0a12',
-                    boxShadow: `0 0 12px ${step.accent}66`,
-                    zIndex: 5,
-                  }} />
-                </div>
-                <div style={{ padding: '22px 22px 26px' }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: '#f8fafc', marginBottom: 8, letterSpacing: '-0.01em' }}>{step.title}</div>
-                  <div style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.65 }}>{step.desc}</div>
-                </div>
-              </div>
-            ))}
 
-            <div style={{ minWidth: 'calc(50vw - 560px)', flexShrink: 0 }} />
-          </div>
+                  {/* Center dot */}
+                  <div style={{ order: 2, display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 3 }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: '50%',
+                      background: `${step.accent}18`,
+                      border: `2px solid ${step.accent}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: `0 0 20px ${step.accent}33, 0 0 0 8px ${step.accent}08`,
+                    }}>
+                      <span style={{ fontSize: 14, fontWeight: 900, color: step.accent }}>{step.num}</span>
+                    </div>
+                  </div>
 
-          {/* Scroll hint */}
-          <div style={{ textAlign: 'center', marginTop: 8, opacity: 0.4 }}>
-            <span style={{ fontSize: 11, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
-              Scroll to explore
-            </span>
+                  {/* Right side */}
+                  <div style={{ order: isEven ? 3 : 1, padding: isEven ? '0 0 0 32px' : '0 32px 0 0' }}>
+                    {isEven ? (
+                      /* Text on right */
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Step {step.num}</div>
+                        <h3 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#f8fafc', marginBottom: 14, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h3>
+                        <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{step.desc}</p>
+                      </div>
+                    ) : (
+                      /* Image on right */
+                      <div style={{
+                        position: 'relative', borderRadius: 20, overflow: 'hidden',
+                        border: `1px solid ${step.accent}20`,
+                        boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px ${step.accent}10`,
+                        transform: `translateY(${parallaxOffset}px)`,
+                        transition: 'transform 0.1s linear',
+                      }}>
+                        <img src={step.img} alt={step.title} style={{ width: '100%', height: 240, objectFit: 'cover', display: 'block' }} />
+                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(225deg, transparent 50%, ${step.accent}15 100%)` }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
