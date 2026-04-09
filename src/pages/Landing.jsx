@@ -264,101 +264,52 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS — VERTICAL PARALLAX TIMELINE ─── */}
-      <section id="how-it-works" style={{ padding: '80px 24px 100px' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
             <h2 style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 900, color: '#f8fafc', marginBottom: 12, letterSpacing: '-0.02em' }}>How It Works</h2>
             <p style={{ color: '#94a3b8', maxWidth: 400, margin: '0 auto' }}>From photo to sold in four simple steps</p>
           </div>
 
-          {/* Vertical timeline */}
-          <div style={{ position: 'relative' }}>
-            {/* Center timeline line */}
-            <div style={{
-              position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2,
-              transform: 'translateX(-50%)',
-              background: 'linear-gradient(to bottom, transparent 0%, rgba(139,92,246,0.3) 5%, rgba(139,92,246,0.3) 95%, transparent 100%)',
-            }} />
-
-            {/* Steps */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
             {[
               { num: '01', title: 'Snap a Photo', desc: 'Point your camera at any item you want to sell — sneakers, watches, electronics, vintage finds, designer bags. SnapList works with everything.', img: '/images/landing/step-snap.png', accent: '#8b5cf6' },
               { num: '02', title: 'AI Identifies Everything', desc: 'Our AI instantly recognizes the brand, model, condition, and current market value. It sees details most sellers miss — from serial numbers to material quality.', img: '/images/landing/step-identify.png', accent: '#a78bfa' },
               { num: '03', title: 'Refine & Perfect', desc: 'Review the AI-generated listing. Edit title, description, pricing — or tell the AI what it missed and it\'ll update instantly. You\'re always in control.', img: '/images/landing/step-refine.png', accent: '#c084fc' },
               { num: '04', title: 'List & Sell', desc: 'One tap to export your polished listing to eBay, Poshmark, Mercari, Facebook Marketplace, Depop, or OfferUp. Formatted perfectly for each platform.', img: '/images/landing/step-list.png', accent: '#e879f9' },
             ].map((step, i) => {
-              const isEven = i % 2 === 0
-              // Parallax: each image shifts slightly based on scroll position
-              const parallaxOffset = scrollY * 0.04 * (i % 2 === 0 ? 1 : -1)
-
+              const imageFirst = i % 2 === 0
               return (
                 <div key={i} style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 60px 1fr',
-                  gap: 0, alignItems: 'center',
-                  marginBottom: i < 3 ? 80 : 0,
-                  minHeight: 320,
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 40,
+                  alignItems: 'center',
                 }}>
-                  {/* Left side */}
-                  <div style={{ order: isEven ? 1 : 3, padding: isEven ? '0 32px 0 0' : '0 0 0 32px' }}>
-                    {isEven ? (
-                      /* Image on left */
-                      <div style={{
-                        position: 'relative', borderRadius: 20, overflow: 'hidden',
-                        border: `1px solid ${step.accent}20`,
-                        boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px ${step.accent}10`,
-                        transform: `translateY(${parallaxOffset}px)`,
-                        transition: 'transform 0.1s linear',
-                      }}>
-                        <img src={step.img} alt={step.title} style={{ width: '100%', height: 240, objectFit: 'cover', display: 'block' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, transparent 50%, ${step.accent}15 100%)` }} />
-                      </div>
-                    ) : (
-                      /* Text on left */
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Step {step.num}</div>
-                        <h3 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#f8fafc', marginBottom: 14, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h3>
-                        <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{step.desc}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Center dot */}
-                  <div style={{ order: 2, display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 3 }}>
+                  {/* Image */}
+                  <div style={{ order: imageFirst ? 1 : 2 }}>
                     <div style={{
-                      width: 44, height: 44, borderRadius: '50%',
-                      background: `${step.accent}18`,
-                      border: `2px solid ${step.accent}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      boxShadow: `0 0 20px ${step.accent}33, 0 0 0 8px ${step.accent}08`,
+                      position: 'relative', borderRadius: 16, overflow: 'hidden',
+                      border: '1px solid rgba(139,92,246,0.12)',
                     }}>
-                      <span style={{ fontSize: 14, fontWeight: 900, color: step.accent }}>{step.num}</span>
+                      <img src={step.img} alt={step.title} style={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }} />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,10,18,0.6) 0%, transparent 40%)' }} />
                     </div>
                   </div>
 
-                  {/* Right side */}
-                  <div style={{ order: isEven ? 3 : 1, padding: isEven ? '0 0 0 32px' : '0 32px 0 0' }}>
-                    {isEven ? (
-                      /* Text on right */
-                      <div>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Step {step.num}</div>
-                        <h3 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#f8fafc', marginBottom: 14, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h3>
-                        <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{step.desc}</p>
-                      </div>
-                    ) : (
-                      /* Image on right */
-                      <div style={{
-                        position: 'relative', borderRadius: 20, overflow: 'hidden',
-                        border: `1px solid ${step.accent}20`,
-                        boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px ${step.accent}10`,
-                        transform: `translateY(${parallaxOffset}px)`,
-                        transition: 'transform 0.1s linear',
-                      }}>
-                        <img src={step.img} alt={step.title} style={{ width: '100%', height: 240, objectFit: 'cover', display: 'block' }} />
-                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(225deg, transparent 50%, ${step.accent}15 100%)` }} />
-                      </div>
-                    )}
+                  {/* Text */}
+                  <div style={{ order: imageFirst ? 2 : 1, textAlign: imageFirst ? 'left' : 'right' }}>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 16,
+                      background: `${step.accent}12`, border: `1px solid ${step.accent}25`,
+                      borderRadius: 20, padding: '6px 14px',
+                    }}>
+                      <span style={{ fontSize: 18, fontWeight: 900, color: step.accent }}>{step.num}</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: step.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Step</span>
+                    </div>
+                    <h3 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#f8fafc', marginBottom: 12, letterSpacing: '-0.02em', lineHeight: 1.2 }}>{step.title}</h3>
+                    <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7, maxWidth: 380, margin: imageFirst ? 0 : '0 0 0 auto' }}>{step.desc}</p>
                   </div>
                 </div>
               )

@@ -1,11 +1,9 @@
-<svg viewBox="0 0 144 70" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="0" width="90" height="40" rx="6" fill="#E53238"/>
-  <text x="45" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">e</text>
-  <rect x="18" y="0" width="90" height="40" rx="6" fill="#0064D2" opacity="0.92"/>
-  <text x="63" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">B</text>
-  <rect x="36" y="0" width="90" height="40" rx="6" fill="#F5AF02" opacity="0.92"/>
-  <text x="81" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">a</text>
-  <rect x="54" y="0" width="90" height="40" rx="6" fill="#86B817" opacity="0.92"/>
-  <text x="99" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">y</text>
-  <text x="72" y="60" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8">eBay</text>
+<svg width="100%" viewBox="0 0 680 140" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>eBay placeholder logo</title>
+  <g transform="translate(190, 30)">
+    <text x="0" y="55" font-family="system-ui, sans-serif" font-size="72" font-weight="800" fill="#E53238">e</text>
+    <text x="48" y="48" font-family="system-ui, sans-serif" font-size="72" font-weight="800" fill="#0064D2">B</text>
+    <text x="100" y="58" font-family="system-ui, sans-serif" font-size="72" font-weight="800" fill="#F5AF02">a</text>
+    <text x="148" y="50" font-family="system-ui, sans-serif" font-size="72" font-weight="800" fill="#86B817">y</text>
+  </g>
 </svg>
