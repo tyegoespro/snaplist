@@ -238,26 +238,53 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ─── IMAGE SHOWCASE ─── */}
-      <section style={{ padding: '80px 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+      {/* ─── WHAT YOU CAN SNAP ─── */}
+      <section style={{ padding: '60px 24px' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Works with everything</p>
+          <h2 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 800, color: '#f8fafc', marginBottom: 32, letterSpacing: '-0.02em' }}>Snap it. List it. Sell it.</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
             {[
-              { src: '/images/landing/step-snap.png', label: 'Sneakers & Shoes' },
-              { src: '/images/landing/showcase-electronics.png', label: 'Electronics' },
-              { src: '/images/landing/step-identify.png', label: 'Watches & Jewelry' },
-              { src: '/images/landing/showcase-vintage.png', label: 'Vintage & Collectibles' },
-              { src: '/images/landing/showcase-sneakers.png', label: 'Limited Editions' },
-            ].map((img, i) => (
-              <div key={i} style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s ease', border: '1px solid rgba(139,92,246,0.1)' }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.3)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.1)' }}
+              { emoji: '👟', label: 'Sneakers' },
+              { emoji: '⌚', label: 'Watches' },
+              { emoji: '📱', label: 'Electronics' },
+              { emoji: '👜', label: 'Designer Bags' },
+              { emoji: '🎮', label: 'Gaming' },
+              { emoji: '📀', label: 'Vinyl' },
+              { emoji: '🏺', label: 'Antiques' },
+              { emoji: '💍', label: 'Jewelry' },
+              { emoji: '🧥', label: 'Streetwear' },
+              { emoji: '📷', label: 'Cameras' },
+              { emoji: '🎸', label: 'Instruments' },
+              { emoji: '🪑', label: 'Furniture' },
+              { emoji: '🎨', label: 'Art' },
+              { emoji: '📚', label: 'Books' },
+              { emoji: '🧸', label: 'Toys' },
+              { emoji: '⚾', label: 'Sports Cards' },
+            ].map((cat, i) => (
+              <div key={i} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '10px 18px', borderRadius: 40,
+                background: 'rgba(139,92,246,0.06)',
+                border: '1px solid rgba(139,92,246,0.12)',
+                cursor: 'default', transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+              }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(139,92,246,0.12)'
+                  e.currentTarget.style.borderColor = 'rgba(139,92,246,0.3)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(139,92,246,0.1)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(139,92,246,0.06)'
+                  e.currentTarget.style.borderColor = 'rgba(139,92,246,0.12)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
               >
-                <img src={img.src} alt={img.label} style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,10,18,0.9) 0%, transparent 50%)' }} />
-                <div style={{ position: 'absolute', bottom: 14, left: 16 }}>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#f8fafc' }}>{img.label}</span>
-                </div>
+                <span style={{ fontSize: 18 }}>{cat.emoji}</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0' }}>{cat.label}</span>
               </div>
             ))}
           </div>
