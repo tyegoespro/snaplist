@@ -1,0 +1,11 @@
+<svg viewBox="0 0 144 70" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="90" height="40" rx="6" fill="#E53238"/>
+  <text x="45" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">e</text>
+  <rect x="18" y="0" width="90" height="40" rx="6" fill="#0064D2" opacity="0.92"/>
+  <text x="63" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">B</text>
+  <rect x="36" y="0" width="90" height="40" rx="6" fill="#F5AF02" opacity="0.92"/>
+  <text x="81" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">a</text>
+  <rect x="54" y="0" width="90" height="40" rx="6" fill="#86B817" opacity="0.92"/>
+  <text x="99" y="26" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="white">y</text>
+  <text x="72" y="60" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8">eBay</text>
+</svg>

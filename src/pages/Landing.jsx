@@ -201,58 +201,35 @@ export default function Landing() {
           <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to right, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
           <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to left, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
           
-          <div style={{ display: 'flex', animation: 'marquee 25s linear infinite', width: 'max-content' }}
+          <div style={{ display: 'flex', animation: 'marquee 30s linear infinite', width: 'max-content' }}
             onMouseEnter={e => e.currentTarget.style.animationPlayState = 'paused'}
             onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}
           >
             {/* Double the items for seamless loop */}
             {[...Array(2)].map((_, setIdx) => (
-              <div key={setIdx} style={{ display: 'flex', gap: 48, alignItems: 'center', paddingRight: 48 }}>
+              <div key={setIdx} style={{ display: 'flex', gap: 40, alignItems: 'center', paddingRight: 40 }}>
                 {[
-                  { name: 'eBay', color: '#e53238', secondColor: '#0064d2', letters: [
-                    { char: 'e', color: '#e53238' }, { char: 'B', color: '#0064d2' }, { char: 'a', color: '#f5af02' }, { char: 'y', color: '#86b817' }
-                  ]},
-                  { name: 'Poshmark', color: '#c83268' },
-                  { name: 'Mercari', color: '#4dc5f2' },
-                  { name: 'Facebook', subtext: 'Marketplace', color: '#1877f2' },
-                  { name: 'Depop', color: '#ff2300' },
-                  { name: 'OfferUp', color: '#00ab80' },
+                  { name: 'eBay', src: '/images/logos/ebay.svg', width: 144 },
+                  { name: 'Poshmark', src: '/images/logos/poshmark.svg', width: 100 },
+                  { name: 'Mercari', src: '/images/logos/mercari.svg', width: 100 },
+                  { name: 'Facebook Marketplace', src: '/images/logos/facebook-marketplace.svg', width: 100 },
+                  { name: 'Depop', src: '/images/logos/depop.svg', width: 100 },
+                  { name: 'OfferUp', src: '/images/logos/offerup.svg', width: 100 },
+                  { name: 'Grailed', src: '/images/logos/grailed.svg', width: 100 },
                 ].map((platform, i) => (
                   <div key={`${setIdx}-${i}`} style={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                    minWidth: 140, cursor: 'default',
-                    transition: 'all 0.3s ease',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'default', transition: 'all 0.3s ease',
+                    opacity: 0.85,
                   }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.08)' }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.opacity = '1' }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '0.85' }}
                   >
-                    {/* Platform icon circle */}
-                    <div style={{
-                      width: 56, height: 56, borderRadius: 16,
-                      background: `${platform.color}15`,
-                      border: `1px solid ${platform.color}25`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'all 0.3s ease',
-                    }}>
-                      {platform.letters ? (
-                        <span style={{ fontSize: 20, fontWeight: 900, fontStyle: 'italic', letterSpacing: '-0.5px' }}>
-                          {platform.letters.map((l, li) => (
-                            <span key={li} style={{ color: l.color }}>{l.char}</span>
-                          ))}
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: platform.name === 'Facebook' ? 16 : 18, fontWeight: 800, color: platform.color }}>
-                          {platform.name === 'Facebook' ? 'f' : platform.name.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    {/* Platform name */}
-                    <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{platform.name}</div>
-                      {platform.subtext && (
-                        <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>{platform.subtext}</div>
-                      )}
-                    </div>
+                    <img
+                      src={platform.src}
+                      alt={platform.name}
+                      style={{ width: platform.width, height: 'auto', display: 'block' }}
+                    />
                   </div>
                 ))}
               </div>
