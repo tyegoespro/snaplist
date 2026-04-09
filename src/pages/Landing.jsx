@@ -209,7 +209,7 @@ export default function Landing() {
             {[...Array(2)].map((_, setIdx) => (
               <div key={setIdx} style={{ display: 'flex', gap: 40, alignItems: 'center', paddingRight: 40 }}>
                 {[
-                  { name: 'eBay', src: '/images/logos/ebay.svg', width: 144 },
+                  { name: 'eBay', src: '/images/logos/ebay.svg', width: 100 },
                   { name: 'Poshmark', src: '/images/logos/poshmark.svg', width: 100 },
                   { name: 'Mercari', src: '/images/logos/mercari.svg', width: 100 },
                   { name: 'Facebook Marketplace', src: '/images/logos/facebook-marketplace.svg', width: 100 },
