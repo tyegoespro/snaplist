@@ -31,6 +31,306 @@ function AnimatedCounter({ end, suffix = '', duration = 2000 }) {
   return <span ref={ref}>{count}{suffix}</span>
 }
 
+/* ─── Floating Decorative Element ─── */
+function FloatingElement({ children, style, delay = 0 }) {
+  return (
+    <div style={{
+      position: 'absolute',
+      animation: `floatBounce 6s ease-in-out ${delay}s infinite`,
+      pointerEvents: 'none',
+      userSelect: 'none',
+      zIndex: 2,
+      ...style,
+    }}>
+      {children}
+    </div>
+  )
+}
+
+/* ─── CSS Phone Mockup ─── */
+function PhoneMockup() {
+  return (
+    <div style={{
+      display: 'inline-flex',
+      alignSelf: 'center',
+      position: 'relative',
+      width: '100%',
+      maxWidth: 360,
+      transform: 'rotate(1.5deg)',
+      userSelect: 'none',
+      pointerEvents: 'none',
+    }}>
+      {/* ── Floating decorative elements ── */}
+
+      {/* Yellow speech bubble - top right (like Honk's yellow bubble) */}
+      <FloatingElement style={{ top: '-8%', right: '-25%', width: 140 }} delay={0}>
+        <svg viewBox="0 0 200 163" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M140.754 19.4227C140.754 19.4227 79.537 9.77916 79.3753 9.75456C47.6669 5.0963 17.8676 27.0281 13.0473 58.7145C8.52209 88.4609 26.3082 116.143 54.5904 123.754L116.777 133.545L114.982 145.346C114.834 146.316 114.849 147.311 115.186 148.355C115.523 149.398 116.072 150.143 116.781 150.913C117.491 151.683 118.412 152.153 119.357 152.463C120.303 152.772 121.459 152.782 122.316 152.582C122.988 152.519 137.142 149.71 152.467 140.297C173.07 127.718 185.868 108.824 189.361 85.8671C194.529 54.0682 172.599 24.2672 140.754 19.4227Z" fill="#fde68a"/>
+          <g opacity="0.3">
+            <path d="M96.6 36.8C88.6 35.3 80.8 40.6 79.3 48.6C79 50.5 79 52.5 79.4 54.4C71.2 54.4 64.6 61.2 64.8 69.4C64.8 75.7 69 81.2 74.9 83.3C70.9 90.4 73.3 99.5 80.5 103.5C86.1 106.7 93.2 105.9 97.9 101.5C102 108.7 111 111.1 118.1 107.1C123.7 103.9 126.6 97.5 125.3 91.2C133.5 91.2 140.1 84.4 140 76.2C139.9 70.6 136.7 65.4 131.5 63C135.3 55.7 132.4 46.8 125.1 43C119.3 40 112.3 41.1 107.8 45.7C105.7 41.1 101.6 37.7 96.6 36.8Z" fill="#5b21b6"/>
+          </g>
+        </svg>
+      </FloatingElement>
+
+      {/* Light blue/lilac speech bubble - bottom left (like Honk's blue bubble) */}
+      <FloatingElement style={{ top: '58%', left: '-28%', width: 140 }} delay={1.5}>
+        <svg viewBox="0 0 188 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M57.9 8.6C57.9 8.6 119.7 4 119.9 4C151.9 2 179.8 26.3 182 58.2C184 88.3 164 114.4 135.2 119.6L72.4 124.3L73.3 136.2C73.4 137.2 73.2 138.2 72.8 139.2C72.4 140.2 71.8 140.9 71 141.6C70.2 142.3 69.3 142.7 68.3 142.9C67.4 143.2 66.2 143.1 65.4 142.8C64.7 142.7 50.8 138.7 36.3 128.1C16.8 113.9 5.6 94 4 70.8C1.5 38.7 25.8 10.8 57.9 8.6Z" fill="#c4b5fd" fillOpacity="0.85"/>
+          <g opacity="0.3">
+            <path d="M128.6 49.3C126.7 41.2 120.3 35.3 112.3 34.1C104.4 32.9 96.5 37.1 92.8 44.5C92.4 45.3 92 46.1 91.5 47.1C90.9 46.1 90.4 45.4 89.9 44.7C85.1 37.9 76.7 34.8 69.1 37.1C61.4 39.3 55.8 46.1 55 54.4C54.5 60 56 65.2 58.5 70C62.8 78.2 69 84.4 75.9 89.9C80.3 93 86.9 97.6 94.9 97.2C102.9 96.5 108.8 91.1 112.8 87.3C118.9 81 124.2 73.9 127.3 65.3C129.1 60.1 129.9 54.8 128.6 49.3Z" fill="#4c1d95"/>
+          </g>
+        </svg>
+      </FloatingElement>
+
+      {/* Floating circles */}
+      <FloatingElement style={{ top: '6%', left: '-12%' }} delay={0.5}>
+        <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
+      </FloatingElement>
+
+      <FloatingElement style={{ top: '48%', right: '-8%' }} delay={2}>
+        <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />
+      </FloatingElement>
+
+      <FloatingElement style={{ top: '88%', left: '-8%' }} delay={3}>
+        <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
+      </FloatingElement>
+
+      {/* ── THE PHONE ── */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '390 / 800',
+        background: '#1a1a2e',
+        borderRadius: 48,
+        padding: 12,
+        boxShadow: '0 25px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)',
+      }}>
+        {/* Phone screen area */}
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          borderRadius: 38,
+          overflow: 'hidden',
+          background: '#0f1016',
+        }}>
+          {/* Notch */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '40%',
+            height: 28,
+            background: '#1a1a2e',
+            borderRadius: '0 0 18px 18px',
+            zIndex: 10,
+          }} />
+
+          {/* Status bar indicators */}
+          <div style={{
+            position: 'absolute',
+            top: 6,
+            left: 24,
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'rgba(255,255,255,0.8)',
+            zIndex: 11,
+          }}>
+            9:41
+          </div>
+          <div style={{
+            position: 'absolute',
+            top: 7,
+            right: 20,
+            display: 'flex',
+            gap: 4,
+            alignItems: 'center',
+            zIndex: 11,
+          }}>
+            {/* Signal bars */}
+            <svg width="14" height="10" viewBox="0 0 17 11" fill="rgba(255,255,255,0.8)">
+              <rect x="0" y="7" width="3" height="4" rx="0.5"/>
+              <rect x="4.5" y="4.5" width="3" height="6.5" rx="0.5"/>
+              <rect x="9" y="2" width="3" height="9" rx="0.5"/>
+              <rect x="13.5" y="0" width="3" height="11" rx="0.5"/>
+            </svg>
+            {/* Battery */}
+            <svg width="22" height="10" viewBox="0 0 25 12" fill="rgba(255,255,255,0.8)">
+              <rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="rgba(255,255,255,0.3)" fill="none"/>
+              <rect x="2" y="2" width="17" height="8" rx="1" fill="rgba(255,255,255,0.8)"/>
+              <rect x="22.5" y="3.5" width="2" height="5" rx="0.5"/>
+            </svg>
+          </div>
+
+          {/* App screen UI (rendered in JSX) */}
+          <div style={{
+            width: '100%',
+            height: '100%',
+            background: '#0f1016',
+            display: 'flex',
+            flexDirection: 'column',
+            fontSize: 11,
+            color: '#e2e8f0',
+            overflow: 'hidden',
+          }}>
+            {/* Product photo area */}
+            <div style={{ position: 'relative', flex: '0 0 40%', overflow: 'hidden' }}>
+              <img
+                src="/images/landing/hero.png"
+                alt="Product scan"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+              {/* Scanning overlay effect */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(to bottom, transparent 60%, #0f1016 100%)',
+              }} />
+              {/* Back button */}
+              <div style={{
+                position: 'absolute', top: 32, left: 12,
+                width: 26, height: 26, borderRadius: '50%',
+                background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+            </div>
+
+            {/* Content area */}
+            <div style={{ flex: 1, padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {/* AI Badge */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <span style={{
+                  fontSize: 8, fontWeight: 700, color: '#fde68a',
+                  background: 'rgba(139,92,246,0.3)', borderRadius: 10, padding: '3px 10px',
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                }}>
+                  ✨ AI Identified
+                </span>
+              </div>
+
+              {/* Title */}
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#f8fafc', textAlign: 'center', lineHeight: 1.2 }}>
+                Coach Signature Canvas Crossbody
+              </div>
+
+              {/* Price */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: '#8b5cf6' }}>$89</div>
+                <div style={{ fontSize: 8, color: '#64748b', marginTop: 1 }}>Suggested: $85–$105</div>
+              </div>
+
+              {/* Condition */}
+              <div>
+                <div style={{ fontSize: 8, color: '#64748b', marginBottom: 3, fontWeight: 600 }}>Condition</div>
+                <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
+                  {['New', 'Like New', 'Good', 'Fair'].map((c, i) => (
+                    <span key={i} style={{
+                      fontSize: 7, fontWeight: 600, padding: '3px 8px', borderRadius: 8,
+                      background: i === 1 ? '#8b5cf6' : 'rgba(255,255,255,0.06)',
+                      color: i === 1 ? '#fff' : '#64748b',
+                      border: i === 1 ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                    }}>{c}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Market data row */}
+              <div style={{
+                display: 'flex', gap: 6, justifyContent: 'center', marginTop: 4,
+              }}>
+                {[
+                  { label: 'Market', value: '$95', color: '#f8fafc' },
+                  { label: 'Confidence', value: '94%', color: '#4ade80' },
+                  { label: 'Demand', value: 'High', color: '#fbbf24' },
+                ].map((d, i) => (
+                  <div key={i} style={{
+                    textAlign: 'center', flex: 1,
+                    background: 'rgba(255,255,255,0.03)', borderRadius: 8, padding: '4px 0',
+                    border: '1px solid rgba(255,255,255,0.05)',
+                  }}>
+                    <div style={{ fontSize: 6, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d.label}</div>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: d.color }}>{d.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Description preview */}
+              <div style={{ marginTop: 4 }}>
+                <div style={{ fontSize: 8, color: '#64748b', marginBottom: 2, fontWeight: 600 }}>Description</div>
+                <div style={{
+                  fontSize: 7, color: '#94a3b8', lineHeight: 1.4,
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  borderRadius: 6, padding: '5px 8px',
+                }}>
+                  Authentic Coach Signature Canvas Crossbody bag in excellent condition. Features signature C pattern canvas with leather trim...
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div style={{ marginTop: 'auto', paddingBottom: 8 }}>
+                <div style={{
+                  background: '#8b5cf6', borderRadius: 10, padding: '8px 0',
+                  textAlign: 'center', fontSize: 11, fontWeight: 700, color: '#fff',
+                }}>
+                  List on eBay
+                </div>
+                <div style={{
+                  textAlign: 'center', fontSize: 8, color: '#64748b', marginTop: 3, fontWeight: 500,
+                }}>
+                  + 5 more platforms
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Side button (right side) */}
+        <div style={{
+          position: 'absolute',
+          right: -2.5,
+          top: '28%',
+          width: 3,
+          height: 70,
+          background: '#2a2a40',
+          borderRadius: '0 3px 3px 0',
+        }} />
+
+        {/* Volume buttons (left side) */}
+        <div style={{
+          position: 'absolute',
+          left: -2.5,
+          top: '20%',
+          width: 3,
+          height: 28,
+          background: '#2a2a40',
+          borderRadius: '3px 0 0 3px',
+        }} />
+        <div style={{
+          position: 'absolute',
+          left: -2.5,
+          top: '28%',
+          width: 3,
+          height: 50,
+          background: '#2a2a40',
+          borderRadius: '3px 0 0 3px',
+        }} />
+        <div style={{
+          position: 'absolute',
+          left: -2.5,
+          top: '36%',
+          width: 3,
+          height: 50,
+          background: '#2a2a40',
+          borderRadius: '3px 0 0 3px',
+        }} />
+      </div>
+    </div>
+  )
+}
+
 /* ─── Landing Page ─── */
 export default function Landing() {
   const navigate = useNavigate()
@@ -45,136 +345,151 @@ export default function Landing() {
   return (
     <div style={{ background: '#0a0a12', color: '#e2e8f0', minHeight: '100vh', overflowX: 'hidden' }}>
 
-      {/* ─── NAVBAR ─── */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-        transition: 'all 0.3s ease',
-        background: scrollY > 50 ? 'rgba(10,10,18,0.85)' : 'transparent',
-        backdropFilter: scrollY > 50 ? 'blur(20px)' : 'none',
-        borderBottom: scrollY > 50 ? '1px solid rgba(139,92,246,0.1)' : '1px solid transparent',
+      {/* ─── HERO SECTION — Full Viewport, Vibrant ─── */}
+      <section style={{
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        background: 'linear-gradient(135deg, #4c1d95 0%, #6d28d9 25%, #7c3aed 50%, #8b5cf6 75%, #a78bfa 100%)',
+        padding: '0 24px',
       }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.02em' }}>
-            Snap<span style={{ color: '#8b5cf6' }}>List</span>
-          </span>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-            <button onClick={() => navigate('/login')} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 14, fontWeight: 500, cursor: 'pointer', padding: '8px 16px' }}>
-              Log in
-            </button>
-            <button onClick={() => navigate('/login')} style={{
-              background: '#8b5cf6', border: 'none', color: '#fff', fontSize: 14, fontWeight: 600,
-              borderRadius: 12, padding: '10px 20px', cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-              onMouseEnter={e => { e.target.style.background = '#7c3aed'; e.target.style.boxShadow = '0 0 24px rgba(139,92,246,0.3)' }}
-              onMouseLeave={e => { e.target.style.background = '#8b5cf6'; e.target.style.boxShadow = 'none' }}
-            >
-              Get Started Free
-            </button>
-          </div>
-        </div>
-      </nav>
+        {/* Subtle radial overlay for depth */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.06) 0%, transparent 60%)',
+          pointerEvents: 'none',
+        }}/>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.15) 0%, transparent 60%)',
+          pointerEvents: 'none',
+        }}/>
 
-      {/* ─── HERO SECTION ─── */}
-      <section style={{ position: 'relative', paddingTop: 140, paddingBottom: 0 }}>
-        {/* Background glows */}
-        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 800, height: 600, background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
-
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', padding: '0 24px', position: 'relative', zIndex: 10 }}>
-          {/* Badge */}
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)',
-            borderRadius: 999, padding: '6px 16px', marginBottom: 32,
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#8b5cf6', animation: 'pulse 2s infinite' }} />
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>AI-Powered Reselling</span>
-          </div>
-
-          {/* Headline */}
-          <h1 style={{ fontSize: 'clamp(40px, 8vw, 72px)', fontWeight: 900, lineHeight: 1.05, marginBottom: 24, letterSpacing: '-0.03em', color: '#f8fafc' }}>
-            Snap it.<br />
-            <span style={{ background: 'linear-gradient(135deg, #8b5cf6, #c084fc, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>List it.</span><br />
-            Sell it.
-          </h1>
-
-          {/* Subhead */}
-          <p style={{ fontSize: 18, lineHeight: 1.7, color: '#94a3b8', maxWidth: 560, margin: '0 auto 40px' }}>
-            Turn any item into a marketplace-ready listing in seconds.
-            AI identifies brands, suggests prices from real market data,
-            and formats your listing for every platform.
-          </p>
-
-          {/* CTAs */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginBottom: 64 }}>
-            <button onClick={() => navigate('/login')} style={{
-              background: '#8b5cf6', border: 'none', color: '#fff', fontSize: 18, fontWeight: 700,
-              borderRadius: 16, padding: '16px 32px', cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-              onMouseEnter={e => { e.target.style.background = '#7c3aed'; e.target.style.transform = 'translateY(-2px)'; e.target.style.boxShadow = '0 8px 32px rgba(139,92,246,0.35)' }}
-              onMouseLeave={e => { e.target.style.background = '#8b5cf6'; e.target.style.transform = 'translateY(0)'; e.target.style.boxShadow = 'none' }}
-            >
-              Start Listing Free →
-            </button>
-            <a href="#how-it-works" style={{
-              display: 'flex', alignItems: 'center', gap: 10, color: '#94a3b8', fontSize: 16, fontWeight: 500,
-              textDecoration: 'none', padding: '16px 8px', transition: 'color 0.2s ease',
-            }}>
-              <span style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(30,30,50,0.8)', border: '1px solid rgba(139,92,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" fill="#8b5cf6" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <div style={{
+          maxWidth: 980, width: '100%', margin: '0 auto',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          gap: 0,
+          position: 'relative', zIndex: 10,
+        }}
+          className="hero-two-col"
+        >
+          {/* ── LEFT COLUMN: Text Content ── */}
+          <div style={{ flex: '0 0 58%', maxWidth: '58%', paddingTop: 40, paddingBottom: 40 }} className="hero-left">
+            {/* Logo */}
+            <div style={{ marginBottom: 32 }}>
+              <span style={{
+                fontSize: 24, fontWeight: 900, color: '#fff',
+                letterSpacing: '-0.02em',
+              }}>
+                Snap<span style={{ color: '#fde68a' }}>List</span>
               </span>
-              See how it works
-            </a>
-          </div>
-        </div>
-
-        {/* Hero Image — full-bleed with gradient fade */}
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px' }}>
-          <div style={{
-            position: 'relative', borderRadius: 24, overflow: 'hidden',
-            border: '1px solid rgba(139,92,246,0.15)',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.05)',
-          }}>
-            <img src="/images/landing/hero.png" alt="AI-powered product identification" style={{ width: '100%', display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0a0a12 0%, transparent 40%)' }} />
-
-            {/* Overlay info card */}
-            <div style={{
-              position: 'absolute', bottom: 24, left: 24, right: 24,
-              background: 'rgba(15,15,25,0.9)', backdropFilter: 'blur(20px)',
-              borderRadius: 16, padding: 20,
-              border: '1px solid rgba(139,92,246,0.15)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                <img src="/images/landing/verify.png" alt="Brand detail" style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
-                <div style={{ flex: 1, minWidth: 200 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>AI Identified</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#f8fafc' }}>Coach Signature Canvas Crossbody Bag</div>
-                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Brand verified · Like new condition</div>
-                </div>
-                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase' }}>AI Price</div>
-                    <div style={{ fontSize: 20, fontWeight: 900, color: '#8b5cf6' }}>$89</div>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase' }}>Market</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: '#f8fafc' }}>$95</div>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase' }}>Confidence</div>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: '#4ade80' }}>94%</div>
-                  </div>
-                </div>
-              </div>
             </div>
+
+            {/* Main Headline */}
+            <h1 style={{
+              fontSize: 'clamp(44px, 9vw, 68px)',
+              fontWeight: 900,
+              lineHeight: 1.08,
+              letterSpacing: '-0.03em',
+              margin: '0 0 20px',
+              color: '#fff',
+            }}>
+              <span style={{
+                display: 'block',
+                color: '#fde68a',
+              }}>
+                Snap it.
+              </span>
+              <span style={{ display: 'block' }}>
+                List it.
+              </span>
+              <span style={{ display: 'block' }}>
+                Sell it.
+              </span>
+            </h1>
+
+            {/* Subhead */}
+            <p style={{
+              fontSize: 'clamp(15px, 2vw, 19px)',
+              lineHeight: 1.55,
+              color: 'rgba(255,255,255,0.75)',
+              fontWeight: 500,
+              letterSpacing: '-0.01em',
+              maxWidth: 420,
+              margin: '0 0 32px',
+            }}>
+              Turn any item into a marketplace-ready listing in seconds.
+              AI identifies brands, suggests prices, and formats for every platform.
+            </p>
+
+            {/* CTA Button */}
+            <button
+              onClick={() => navigate('/login')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                background: '#fff', color: '#5b21b6',
+                fontSize: 16, fontWeight: 700,
+                borderRadius: 14, padding: '14px 28px',
+                border: 'none', cursor: 'pointer',
+                transition: 'all 150ms ease',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+              }}
+              onMouseEnter={e => {
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)'
+              }}
+              onMouseLeave={e => {
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)'
+              }}
+            >
+              Start Listing Free
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                <path d="M1 7L7 1M7 1H2M7 1V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Already have an account link */}
+            <div style={{ marginTop: 14 }}>
+              <button
+                onClick={() => navigate('/login')}
+                style={{
+                  background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
+                  fontSize: 13, fontWeight: 500, cursor: 'pointer', padding: '4px 0',
+                  transition: 'color 150ms ease',
+                }}
+                onMouseEnter={e => e.target.style.color = 'rgba(255,255,255,0.8)'}
+                onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
+              >
+                Already have an account? Log in →
+              </button>
+            </div>
+
+            {/* Marketplace logos strip */}
+            <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap', opacity: 0.6 }}>
+              {[
+                { name: 'eBay', src: '/images/logos/ebay.svg' },
+                { name: 'Poshmark', src: '/images/logos/poshmark.svg' },
+                { name: 'Mercari', src: '/images/logos/mercari.svg' },
+                { name: 'Depop', src: '/images/logos/depop.svg' },
+              ].map((p, i) => (
+                <img key={i} src={p.src} alt={p.name} style={{ height: 20, width: 'auto', filter: 'brightness(10)', opacity: 0.7 }} />
+              ))}
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN: Phone Mockup ── */}
+          <div style={{ flex: '0 0 42%', maxWidth: '42%', textAlign: 'right' }} className="hero-right">
+            <PhoneMockup />
           </div>
         </div>
       </section>
 
       {/* ─── STATS BAR ─── */}
-      <section style={{ borderTop: '1px solid rgba(139,92,246,0.08)', borderBottom: '1px solid rgba(139,92,246,0.08)', padding: '48px 24px', marginTop: 64 }}>
+      <section style={{ borderBottom: '1px solid rgba(139,92,246,0.08)', padding: '56px 24px' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, textAlign: 'center' }}>
           {[
             { value: <AnimatedCounter end={10} suffix="s" />, label: 'Avg Listing Time' },
@@ -182,67 +497,18 @@ export default function Landing() {
             { value: <AnimatedCounter end={50} suffix="K+" />, label: 'Items Listed' },
           ].map((stat, i) => (
             <div key={i}>
-              <div style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 900, color: i === 1 ? '#8b5cf6' : '#f8fafc', marginBottom: 4 }}>{stat.value}</div>
-              <div style={{ fontSize: 12, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</div>
+              <div style={{ fontSize: 'clamp(28px, 5vw, 44px)', fontWeight: 900, color: i === 1 ? '#8b5cf6' : '#f8fafc', marginBottom: 4 }}>{stat.value}</div>
+              <div style={{ fontSize: 12, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>{stat.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── MARKETPLACE LOGO MARQUEE ─── */}
-      <section style={{ padding: '48px 0 56px', overflow: 'hidden' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32, padding: '0 24px' }}>
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.12em' }}>List everywhere, instantly</p>
-        </div>
-        
-        {/* Infinite scroll marquee */}
-        <div style={{ position: 'relative' }}>
-          {/* Edge gradient masks */}
-          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to right, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 120, background: 'linear-gradient(to left, #0a0a12, transparent)', zIndex: 2, pointerEvents: 'none' }} />
-          
-          <div style={{ display: 'flex', animation: 'marquee 30s linear infinite', width: 'max-content' }}
-            onMouseEnter={e => e.currentTarget.style.animationPlayState = 'paused'}
-            onMouseLeave={e => e.currentTarget.style.animationPlayState = 'running'}
-          >
-            {/* Double the items for seamless loop */}
-            {[...Array(2)].map((_, setIdx) => (
-              <div key={setIdx} style={{ display: 'flex', gap: 40, alignItems: 'center', paddingRight: 40 }}>
-                {[
-                  { name: 'eBay', src: '/images/logos/ebay.svg', width: 100 },
-                  { name: 'Poshmark', src: '/images/logos/poshmark.svg', width: 100 },
-                  { name: 'Mercari', src: '/images/logos/mercari.svg', width: 100 },
-                  { name: 'Facebook Marketplace', src: '/images/logos/facebook-marketplace.svg', width: 100 },
-                  { name: 'Depop', src: '/images/logos/depop.svg', width: 100 },
-                  { name: 'OfferUp', src: '/images/logos/offerup.svg', width: 100 },
-                  { name: 'Grailed', src: '/images/logos/grailed.svg', width: 100 },
-                ].map((platform, i) => (
-                  <div key={`${setIdx}-${i}`} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'default', transition: 'all 0.3s ease',
-                    opacity: 0.85,
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.opacity = '1' }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '0.85' }}
-                  >
-                    <img
-                      src={platform.src}
-                      alt={platform.name}
-                      style={{ width: platform.width, height: 'auto', display: 'block' }}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── WHAT YOU CAN SNAP ─── */}
-      <section style={{ padding: '60px 24px' }}>
+      <section style={{ padding: '72px 24px' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 12, fontWeight: 700, color: '#8b5cf6', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>Works with everything</p>
-          <h2 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 800, color: '#f8fafc', marginBottom: 32, letterSpacing: '-0.02em' }}>Snap it. List it. Sell it.</h2>
+          <h2 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: 800, color: '#f8fafc', marginBottom: 32, letterSpacing: '-0.02em' }}>What can you snap?</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
             {[
               { emoji: '👟', label: 'Sneakers' },
@@ -449,12 +715,12 @@ export default function Landing() {
       <section style={{ padding: '96px 24px' }}>
         <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
           <div style={{
-            background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(15,15,25,0.8), rgba(139,92,246,0.05))',
-            border: '1px solid rgba(139,92,246,0.15)',
+            background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(91,33,182,0.2), rgba(139,92,246,0.08))',
+            border: '1px solid rgba(139,92,246,0.2)',
             borderRadius: 24, padding: '64px 40px',
             position: 'relative', overflow: 'hidden',
           }}>
-            <div style={{ position: 'absolute', top: -80, right: -80, width: 250, height: 250, background: 'radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: -80, right: -80, width: 250, height: 250, background: 'radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
             <div style={{ position: 'relative', zIndex: 10 }}>
               <h2 style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 900, color: '#f8fafc', marginBottom: 16, letterSpacing: '-0.02em' }}>Ready to flip faster?</h2>
               <p style={{ fontSize: 16, color: '#94a3b8', marginBottom: 32, maxWidth: 440, margin: '0 auto 32px' }}>
@@ -486,25 +752,75 @@ export default function Landing() {
         </div>
       </footer>
 
-      {/* Keyframe injection */}
+      {/* ─── Keyframe injection + responsive styles ─── */}
       <style>{`
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        @keyframes timelineGlow {
-          0% { left: 0%; }
-          100% { left: calc(100% - 80px); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        * { box-sizing: border-box; margin: 0; }
+        img { -webkit-user-drag: none; }
+        div::-webkit-scrollbar { display: none; }
+
+        @keyframes floatBounce {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          33% { transform: translateY(-8px) rotate(2deg); }
+          66% { transform: translateY(4px) rotate(-1deg); }
         }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
-        * { box-sizing: border-box; margin: 0; }
-        img { -webkit-user-drag: none; }
-        /* Hide scrollbar for horizontal scroller */
-        div::-webkit-scrollbar { display: none; }
-        @media (max-width: 480px) {
-          section > div { grid-template-columns: 1fr !important; }
+
+        /* Responsive: hero two-column layout */
+        .hero-two-col {
+          display: flex !important;
+          flex-direction: row !important;
         }
-      `}</style>
+
+        @media (max-width: 810px) {
+          .hero-two-col {
+            flex-direction: column !important;
+            text-align: center;
+          }
+          .hero-left {
+            flex: 1 1 auto !important;
+            max-width: 100% !important;
+            padding-top: 100px !important;
+            padding-bottom: 0 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .hero-left p {
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+          .hero-right {
+            flex: 1 1 auto !important;
+            max-width: 320px !important;
+            margin: 0 auto -6rem;
+            text-align: center !important;
+          }
+          section > div {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-right {
+            max-width: 260px !important;
+          }
+          section > div {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}
+      </style>
     </div>
   )
 }
